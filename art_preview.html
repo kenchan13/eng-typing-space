@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>星際巡邏隊：字母防衛戰 - 美術資產與音效預覽</title>
+  <style>
+    :root {
+      --bg-dark: #0b0e1b;
+      --card-bg: rgba(22, 27, 46, 0.85);
+      --neon-cyan: #00f0ff;
+      --neon-pink: #ff007f;
+      --neon-gold: #ffe600;
+      --neon-green: #39ff14;
+      --neon-red: #ff3b30;
+      --text-main: #f0f6fc;
+      --text-dim: #8b949e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #19102e 0%, var(--bg-dark) 70%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      color: var(--text-dim);
+      font-size: 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    h2.section-title {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+
+    /* Concept Art Image Box */
+    .concept-box {
+      text-align: center;
+    }
+    .concept-box img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 2px solid var(--neon-cyan);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    /* Sprite Showcase Grid */
+    .sprite-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+    }
+
+    .sprite-card {
+      background: rgba(10, 14, 28, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .sprite-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 6px 20px rgba(0, 240, 255, 0.2);
+    }
+
+    .svg-container {
+      width: 120px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .sprite-title {
+      font-weight: bold;
+      color: var(--neon-gold);
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+
+    .sprite-desc {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    /* Sound Effects Player */
+    .sound-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .sound-btn {
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid var(--neon-cyan);
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .sound-btn:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+      transform: scale(1.02);
+    }
+
+    .sound-btn.charged {
+      border-color: var(--neon-pink);
+      background: rgba(255, 0, 127, 0.1);
+    }
+    .sound-btn.charged:hover {
+      background: var(--neon-pink);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(255, 0, 127, 0.6);
+    }
+
+    .sound-btn.error {
+      border-color: var(--neon-red);
+      background: rgba(255, 59, 48, 0.1);
+    }
+    .sound-btn.error:hover {
+      background: var(--neon-red);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(255, 59, 48, 0.6);
+    }
+
+    /* Keyboard Interactive Demo */
+    .keyboard-demo {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #080a14;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid #232a42;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .kb-row {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .key {
+      background: #1a2035;
+      color: #cbd5e1;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 0.9rem;
+      border: 1px solid #334155;
+      min-width: 38px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .key.special {
+      min-width: 80px;
+      background: #252e4d;
+    }
+
+    .key.highlight-target {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 12px var(--neon-cyan);
+      animation: pulse 1s infinite alternate;
+    }
+
+    .key.highlight-shift {
+      background: var(--neon-gold);
+      color: #000;
+      box-shadow: 0 0 14px var(--neon-gold);
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.06); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🚀 星際巡邏隊：美術與音效預覽展示</h1>
+    <p class="subtitle">單一 HTML 規格 • 100% 向量 SVG 圖像 • 瀏覽器原生 Web Audio 合成音效</p>
+  </header>
+
+  <div class="container">
+
+    <!-- 概念視覺圖 -->
+    <div class="section-card concept-box">
+      <h2 class="section-title">🎨 街機概念美術視覺圖 (Concept Art)</h2>
+      <img src="concept_art_preview.png" alt="遊戲概念美術" style="max-height: 420px; object-fit: contain;">
+      <p style="margin-top: 12px; color: var(--text-dim); font-size: 0.9rem;">
+        ※ 展示整體太空背景、落下目標（護盾大寫機、小寫隕石）、底部發光鍵盤與發光雷射光束。
+      </p>
+    </div>
+
+    <!-- 向量 SVG 資產預覽 -->
+    <div class="section-card">
+      <h2 class="section-title">👾 遊戲物件與角色 (純向量 SVG，點開即可縮放無損)</h2>
+      <div class="sprite-grid">
+        
+        <!-- 玩家戰機 -->
+        <div class="sprite-card">
+          <div class="svg-container">
+            <svg viewBox="0 0 80 80" width="80" height="80">
+              <!-- 引擎尾焰 -->
+              <polygon points="32,65 40,78 48,65" fill="#ff7700" />
+              <polygon points="36,65 40,74 44,65" fill="#ffe600" />
+              <!-- 機翼 -->
+              <polygon points="40,10 65,58 55,62 48,50 32,50 25,62 15,58" fill="#1b829b" stroke="#00f0ff" stroke-width="2" />
+              <!-- 主機身 -->
+              <polygon points="40,8 48,45 32,45" fill="#00f0ff" />
+              <!-- 座艙罩 -->
+              <ellipse cx="40" cy="30" rx="4" ry="10" fill="#ffffff" opacity="0.8" />
+              <!-- 雙砲管 -->
+              <rect x="22" y="38" width="3" height="12" fill="#ffe600" />
+              <rect x="55" y="38" width="3" height="12" fill="#ffe600" />
+            </svg>
+          </div>
+          <div class="sprite-title">玩家戰鬥機</div>
+          <div class="sprite-desc">尖端攔截機，左右配置脈衝雷射砲管與動態噴射尾焰。</div>
+        </div>
+
+        <!-- Level 1 護盾裝甲機 (大寫) -->
+        <div class="sprite-card">
+          <div class="svg-container">
+            <svg viewBox="0 0 80 80" width="80" height="80">
+              <!-- 護盾光環 -->
+              <circle cx="40" cy="40" r="34" fill="rgba(255, 0, 127, 0.15)" stroke="#ff007f" stroke-width="2.5" stroke-dasharray="6,3" />
+              <!-- 敵機本體 -->
+              <polygon points="40,20 60,35 52,55 28,55 20,35" fill="#2d1537" stroke="#ff007f" stroke-width="2" />
+              <!-- 字母顯示 -->
+              <text x="40" y="47" fill="#ffe600" font-size="22" font-family="monospace" font-weight="bold" text-anchor="middle">A</text>
+            </svg>
+          </div>
+          <div class="sprite-title">Lv1: 護盾裝甲機 (大寫)</div>
+          <div class="sprite-desc">帶有旋轉能量護盾，需使用 Shift 鍵充能雷射才能破盾。</div>
+        </div>
+
+        <!-- Level 2 發光小行星 (小寫) -->
+        <div class="sprite-card">
+          <div class="svg-container">
+            <svg viewBox="0 0 80 80" width="80" height="80">
+              <!-- 隕石多面體 -->
+              <polygon points="35,12 60,18 72,40 58,68 30,70 12,50 15,25" fill="#1b2438" stroke="#00f0ff" stroke-width="2" />
+              <!-- 裂痕 -->
+              <path d="M 35,12 L 40,35 L 58,68" stroke="#00f0ff" stroke-width="1.5" fill="none" opacity="0.6" />
+              <path d="M 40,35 L 20,45" stroke="#00f0ff" stroke-width="1.5" fill="none" opacity="0.6" />
+              <!-- 字母顯示 -->
+              <text x="40" y="46" fill="#ffffff" font-size="24" font-family="monospace" font-weight="bold" text-anchor="middle">a</text>
+            </svg>
+          </div>
+          <div class="sprite-title">Lv2: 宇宙隕石 (小寫)</div>
+          <div class="sprite-desc">低速飄動的小行星，普通雷射（無須 Shift）直接擊碎。</div>
+        </div>
+
+        <!-- Level 4 信標戰艦 (首字大寫單字) -->
+        <div class="sprite-card">
+          <div class="svg-container" style="width: 160px;">
+            <svg viewBox="0 0 160 80" width="160" height="80">
+              <!-- 巡航艦體 -->
+              <polygon points="10,40 25,25 135,25 150,40 135,55 25,55" fill="#162038" stroke="#38bdf8" stroke-width="2" />
+              <!-- 字母卡槽 -->
+              <!-- 首字大寫高亮 -->
+              <rect x="35" y="28" width="22" height="24" rx="4" fill="rgba(255, 230, 0, 0.25)" stroke="#ffe600" stroke-width="2" />
+              <text x="46" y="46" fill="#ffe600" font-size="16" font-family="monospace" font-weight="bold" text-anchor="middle">S</text>
+              <!-- 後續小寫 -->
+              <rect x="62" y="28" width="20" height="24" rx="4" fill="rgba(255, 255, 255, 0.08)" stroke="#64748b" stroke-width="1" />
+              <text x="72" y="46" fill="#ffffff" font-size="16" font-family="monospace" font-weight="bold" text-anchor="middle">t</text>
+              <rect x="86" y="28" width="20" height="24" rx="4" fill="rgba(255, 255, 255, 0.08)" stroke="#64748b" stroke-width="1" />
+              <text x="96" y="46" fill="#ffffff" font-size="16" font-family="monospace" font-weight="bold" text-anchor="middle">a</text>
+              <rect x="110" y="28" width="20" height="24" rx="4" fill="rgba(255, 255, 255, 0.08)" stroke="#64748b" stroke-width="1" />
+              <text x="120" y="46" fill="#ffffff" font-size="16" font-family="monospace" font-weight="bold" text-anchor="middle">r</text>
+            </svg>
+          </div>
+          <div class="sprite-title">Lv4: 導航信標艦</div>
+          <div class="sprite-desc">首字大寫（金框提示 Shift），後續字母依序點射破壞。</div>
+        </div>
+
+        <!-- Level 5 終極母艦 (Boss) -->
+        <div class="sprite-card">
+          <div class="svg-container" style="width: 160px;">
+            <svg viewBox="0 0 160 80" width="160" height="80">
+              <!-- 母艦主翼 -->
+              <polygon points="10,20 80,10 150,20 130,60 80,72 30,60" fill="#2c0c38" stroke="#ff007f" stroke-width="2" />
+              <!-- 核心反應爐 -->
+              <circle cx="80" cy="40" r="14" fill="#ff007f" opacity="0.8" />
+              <circle cx="80" cy="40" r="8" fill="#ffe600" />
+              <!-- 砲台 -->
+              <rect x="40" y="55" width="8" height="12" fill="#00f0ff" />
+              <rect x="112" y="55" width="8" height="12" fill="#00f0ff" />
+            </svg>
+          </div>
+          <div class="sprite-title">Lv5: 外星指揮母艦</div>
+          <div class="sprite-desc">釋放多階段複合大小寫代碼（如 NASA、Galaxy），血量雄厚。</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 內建 Web Audio 音效試聽區 -->
+    <div class="section-card">
+      <h2 class="section-title">🔊 程式合成音效試聽 (點擊即時發聲，免載入外部檔案)</h2>
+      <div class="sound-grid">
+        <button class="sound-btn" onclick="playSound('normal')">
+          ⚡ 普通雷射 (小寫射擊)
+        </button>
+        <button class="sound-btn charged" onclick="playSound('charged')">
+          🔥 充能重砲 (Shift 射擊)
+        </button>
+        <button class="sound-btn error" onclick="playSound('error')">
+          🛡️ 護盾彈開 (漏按 Shift)
+        </button>
+        <button class="sound-btn" onclick="playSound('explode')">
+          💥 目標擊破爆炸聲
+        </button>
+        <button class="sound-btn" style="border-color: var(--neon-gold);" onclick="playSound('win')">
+          🎺 通關勝仗號角
+        </button>
+      </div>
+    </div>
+
+    <!-- 智能左右 Shift 指法導引模擬 -->
+    <div class="section-card">
+      <h2 class="section-title">⌨️ 智能指法輔助鍵盤（對稱雙手 Shift 導引模擬）</h2>
+      <p style="margin-bottom: 16px; color: var(--text-dim); font-size: 0.95rem;">
+        ※ 當要求輸入右手字母 <strong style="color:var(--neon-cyan)">"P"</strong>（大寫）時，系統高亮指示左手按住 <strong style="color:var(--neon-gold)">[左 Shift]</strong>，培養正規盲打指法：
+      </p>
+
+      <div class="keyboard-demo">
+        <div class="kb-row">
+          <div class="key">Q</div><div class="key">W</div><div class="key">E</div><div class="key">R</div>
+          <div class="key">T</div><div class="key">Y</div><div class="key">U</div><div class="key">I</div>
+          <div class="key">O</div><div class="key highlight-target">P</div>
+        </div>
+        <div class="kb-row">
+          <div class="key">A</div><div class="key">S</div><div class="key">D</div><div class="key">F</div>
+          <div class="key">G</div><div class="key">H</div><div class="key">J</div><div class="key">K</div>
+          <div class="key">L</div>
+        </div>
+        <div class="kb-row">
+          <div class="key special highlight-shift">L-Shift (按住)</div>
+          <div class="key">Z</div><div class="key">X</div><div class="key">C</div><div class="key">V</div>
+          <div class="key">B</div><div class="key">N</div><div class="key">M</div>
+          <div class="key special">R-Shift</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Web Audio API Synthesizer 音效引擎
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      const ctx = getAudioCtx();
+      const now = ctx.currentTime;
+
+      if (type === 'normal') {
+        // 普通雷射
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(800, now);
+        osc.frequency.exponentialRampToValueAtTime(150, now + 0.12);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.12);
+
+      } else if (type === 'charged') {
+        // 充能 Shift 重砲
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(450, now);
+        osc.frequency.exponentialRampToValueAtTime(1200, now + 0.18);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.18);
+
+      } else if (type === 'error') {
+        // 護盾彈開音
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.setValueAtTime(140, now + 0.08);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.2);
+
+      } else if (type === 'explode') {
+        // 白噪音爆炸
+        const bufferSize = ctx.sampleRate * 0.25;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1000, now);
+        filter.frequency.exponentialRampToValueAtTime(80, now + 0.25);
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        noise.start(now);
+
+      } else if (type === 'win') {
+        // 通關號角 (C5 -> E5 -> G5 -> C6)
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+          gain.gain.setValueAtTime(0.3, now + idx * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.12);
+          osc.stop(now + idx * 0.12 + 0.25);
+        });
+      }
+    }
+  </script>
+</body>
+</html>

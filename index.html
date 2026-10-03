@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>星際巡邏隊：字母防衛戰 - Space Type Patrol</title>
+  <style>
+    :root {
+      --bg-dark: #070913;
+      --panel-bg: rgba(13, 17, 34, 0.88);
+      --neon-cyan: #00f0ff;
+      --neon-pink: #ff007f;
+      --neon-gold: #ffe600;
+      --neon-green: #39ff14;
+      --neon-red: #ff3838;
+      --text-main: #f0f6fc;
+      --text-dim: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* 遊戲主容器 */
+    #game-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 1100px;
+      height: 96vh;
+      max-height: 820px;
+      background: radial-gradient(circle at 50% 20%, #171133 0%, #060812 80%);
+      border: 2px solid #232c4d;
+      border-radius: 14px;
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* 頂部 HUD */
+    #hud {
+      height: 64px;
+      background: var(--panel-bg);
+      border-bottom: 2px solid rgba(0, 240, 255, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 10;
+    }
+
+    .hud-group {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .hud-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hud-label {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .hud-value {
+      font-size: 1.25rem;
+      font-weight: 800;
+      font-family: 'Courier New', Courier, monospace;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+    }
+
+    .hud-value.gold {
+      color: var(--neon-gold);
+      text-shadow: 0 0 8px rgba(255, 230, 0, 0.5);
+    }
+
+    /* 護盾血條 */
+    .shield-container {
+      width: 140px;
+      height: 12px;
+      background: #1e293b;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #475569;
+      margin-top: 4px;
+    }
+
+    .shield-bar {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #00f0ff, #39ff14);
+      transition: width 0.25s ease, background 0.25s ease;
+    }
+
+    /* 按鈕 */
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-icon:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 12px var(--neon-cyan);
+    }
+
+    /* 遊戲畫布 */
+    #canvas-container {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 警示浮動橫幅 (Caps Lock / 提示) */
+    #toast-msg {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 56, 56, 0.9);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      box-shadow: 0 0 15px rgba(255, 56, 56, 0.8);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 25;
+    }
+
+    #toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(5px);
+    }
+
+    /* 底部智慧鍵盤指引區 */
+    #keyboard-panel {
+      background: rgba(8, 11, 22, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 10;
+    }
+
+    .kb-hint-text {
+      font-size: 0.82rem;
+      color: var(--neon-gold);
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .kb-row {
+      display: flex;
+      gap: 5px;
+    }
+
+    .key {
+      background: #141a2e;
+      color: #cbd5e1;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      font-size: 0.88rem;
+      min-width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      border: 1px solid #2a3556;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+
+    .key.wide-shift {
+      min-width: 90px;
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+
+    .key.active-target {
+      background: var(--neon-cyan) !important;
+      color: #000 !important;
+      font-weight: 900;
+      border-color: #fff !important;
+      box-shadow: 0 0 12px var(--neon-cyan);
+      transform: translateY(-2px);
+    }
+
+    .key.active-shift {
+      background: var(--neon-pink) !important;
+      color: #fff !important;
+      font-weight: 900;
+      border-color: #fff !important;
+      box-shadow: 0 0 16px var(--neon-pink);
+      animation: pulse-shift 0.8s infinite alternate;
+    }
+
+    .key.pressed {
+      transform: scale(0.92);
+      filter: brightness(1.3);
+    }
+
+    @keyframes pulse-shift {
+      from { transform: scale(1); }
+      to { transform: scale(1.04); }
+    }
+
+    /* 彈窗遮罩 (開始/過關/失敗/結算) */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(5, 7, 16, 0.88);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: linear-gradient(145deg, #161c36, #0e1224);
+      border: 2px solid var(--neon-cyan);
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.25);
+      border-radius: 16px;
+      padding: 32px 36px;
+      width: 90%;
+      max-width: 520px;
+      text-align: center;
+      animation: pop-in 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+
+    @keyframes pop-in {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-title {
+      font-size: 1.8rem;
+      color: var(--neon-cyan);
+      margin-bottom: 12px;
+      text-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+    }
+
+    .modal-desc {
+      font-size: 1rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .modal-stats {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .stat-row {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+    .stat-val {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--neon-gold);
+    }
+
+    .btn-action {
+      background: linear-gradient(90deg, #00f0ff, #0099ff);
+      color: #000;
+      border: none;
+      padding: 12px 32px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
+      transition: all 0.2s;
+      letter-spacing: 1px;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.7);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid #475569;
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin-left: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      border-color: #cbd5e1;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-wrapper">
+    <!-- 頂部 HUD -->
+    <div id="hud">
+      <div class="hud-group">
+        <div class="hud-item">
+          <span class="hud-label">當前關卡 (Level)</span>
+          <span id="hud-level" class="hud-value">Lv.1</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">任務進度 (40 擊滿分)</span>
+          <span id="hud-level-score" class="hud-value gold">0 / 40</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">總得分 (Total)</span>
+          <span id="hud-total-score" class="hud-value">0 / 200</span>
+        </div>
+      </div>
+
+      <div class="hud-group">
+        <div class="hud-item" style="align-items: flex-end;">
+          <span class="hud-label">基地防護罩 (Shield)</span>
+          <div class="shield-container">
+            <div id="hud-shield" class="shield-bar"></div>
+          </div>
+        </div>
+        <button id="btn-sound" class="btn-icon">🔊 音效: 開</button>
+        <button id="btn-pause" class="btn-icon">⏸ 暫停</button>
+      </div>
+    </div>
+
+    <!-- 浮動警告提示 -->
+    <div id="toast-msg">⚠️ 請按住 Shift 鍵充能攻擊大寫目標！</div>
+
+    <!-- 遊戲動態 Canvas -->
+    <div id="canvas-container">
+      <canvas id="game-canvas"></canvas>
+    </div>
+
+    <!-- 底部智慧輔助鍵盤 -->
+    <div id="keyboard-panel">
+      <div id="kb-hint" class="kb-hint-text">
+        💡 指法提示：請準備開始！
+      </div>
+      <!-- 鍵盤 Row 1 -->
+      <div class="kb-row">
+        <div class="key" data-key="q">Q</div>
+        <div class="key" data-key="w">W</div>
+        <div class="key" data-key="e">E</div>
+        <div class="key" data-key="r">R</div>
+        <div class="key" data-key="t">T</div>
+        <div class="key" data-key="y">Y</div>
+        <div class="key" data-key="u">U</div>
+        <div class="key" data-key="i">I</div>
+        <div class="key" data-key="o">O</div>
+        <div class="key" data-key="p">P</div>
+      </div>
+      <!-- 鍵盤 Row 2 -->
+      <div class="kb-row">
+        <div class="key" data-key="a">A</div>
+        <div class="key" data-key="s">S</div>
+        <div class="key" data-key="d">D</div>
+        <div class="key" data-key="f">F</div>
+        <div class="key" data-key="g">G</div>
+        <div class="key" data-key="h">H</div>
+        <div class="key" data-key="j">J</div>
+        <div class="key" data-key="k">K</div>
+        <div class="key" data-key="l">L</div>
+      </div>
+      <!-- 鍵盤 Row 3 (包含左右 Shift) -->
+      <div class="kb-row">
+        <div class="key wide-shift" id="key-shift-left">Left Shift</div>
+        <div class="key" data-key="z">Z</div>
+        <div class="key" data-key="x">X</div>
+        <div class="key" data-key="c">C</div>
+        <div class="key" data-key="v">V</div>
+        <div class="key" data-key="b">B</div>
+        <div class="key" data-key="n">N</div>
+        <div class="key" data-key="m">M</div>
+        <div class="key wide-shift" id="key-shift-right">Right Shift</div>
+      </div>
+    </div>
+
+    <!-- 彈窗：遊戲開始畫面 -->
+    <div id="modal-start" class="modal-overlay active">
+      <div class="modal-card">
+        <h2 class="modal-title">🚀 星際巡邏隊：字母防衛戰</h2>
+        <p class="modal-desc">
+          指揮官！未知外星部隊正在進犯地球軌道！<br>
+          請運用雷射主砲精準打擊字母目標。<br><br>
+          • <strong>每按對 1 個字母 = 射擊 1 次 = 得 1 分</strong><br>
+          • <strong>每關目標：擊中 40 發（滿分 40 分）</strong><br>
+          • 遇到大寫字母時，請練習<strong>按住 Shift 鍵</strong>充能！
+        </p>
+        <button id="btn-start-game" class="btn-action">立即出擊 START</button>
+      </div>
+    </div>
+
+    <!-- 彈窗：關卡過關結算 (Level Clear) -->
+    <div id="modal-clear" class="modal-overlay">
+      <div class="modal-card">
+        <h2 class="modal-title" style="color: var(--neon-gold);">🎉 關卡防衛成功！</h2>
+        <p id="clear-level-text" class="modal-desc">第 1 關已順利完成！</p>
+        <div class="modal-stats">
+          <div class="stat-row">
+            <span class="stat-label">關卡得分</span>
+            <span id="stat-level-score" class="stat-val">40 / 40</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">打字準確率</span>
+            <span id="stat-accuracy" class="stat-val">98%</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">打字速度 (WPM)</span>
+            <span id="stat-wpm" class="stat-val">42 WPM</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">累計總分</span>
+            <span id="stat-cum-score" class="stat-val">40 / 200</span>
+          </div>
+        </div>
+        <button id="btn-next-level" class="btn-action">進入下一關 NEXT</button>
+      </div>
+    </div>
+
+    <!-- 彈窗：防護罩崩潰 (Game Over) -->
+    <div id="modal-over" class="modal-overlay">
+      <div class="modal-card" style="border-color: var(--neon-red);">
+        <h2 class="modal-title" style="color: var(--neon-red);">💥 基地防護罩破裂！</h2>
+        <p class="modal-desc">目標衝撞防護罩過多！冷靜深呼吸，調整手指姿勢再次嘗試。</p>
+        <button id="btn-retry-level" class="btn-action" style="background: linear-gradient(90deg, #ff3838, #ff7700);">重新挑戰本關</button>
+      </div>
+    </div>
+
+    <!-- 彈窗：全通關終極榮譽結算 (All Clear) -->
+    <div id="modal-victory" class="modal-overlay">
+      <div class="modal-card" style="border-color: var(--neon-gold);">
+        <h2 class="modal-title" style="color: var(--neon-gold);">🏆 地球防衛總司令！全通關</h2>
+        <p class="modal-desc">恭喜您順利打穿 5 大關卡！成功掌握英文大小寫與雙手 Shift 指法！</p>
+        <div class="modal-stats">
+          <div class="stat-row">
+            <span class="stat-label">最終總得分</span>
+            <span id="stat-final-score" class="stat-val">200 / 200</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">軍銜評定</span>
+            <span id="stat-final-rank" class="stat-val" style="color: var(--neon-cyan);">星際特級上校 ⭐⭐⭐</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">平均準確率</span>
+            <span id="stat-final-acc" class="stat-val">96%</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">總擊發次數</span>
+            <span id="stat-final-shots" class="stat-val">200 發</span>
+          </div>
+        </div>
+        <button id="btn-play-again" class="btn-action">再次挑戰 REPLAY</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* =====================================================================
+       1. 音效引擎 (Web Audio API Synthesizer - 原生免載入)
+       ===================================================================== */
+    class SoundEngine {
+      constructor() {
+        this.enabled = true;
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playLaser(isCharged) {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        if (isCharged) {
+          // Shift 充能雷射：鋸齒波高頻揚升
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(450, now);
+          osc.frequency.exponentialRampToValueAtTime(1300, now + 0.16);
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
+        } else {
+          // 普通雷射：三角波俐落下降
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(880, now);
+          osc.frequency.exponentialRampToValueAtTime(180, now + 0.11);
+          gain.gain.setValueAtTime(0.28, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.11);
+        }
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.16);
+      }
+
+      playDeflect() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.setValueAtTime(140, now + 0.08);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.18);
+      }
+
+      playExplosion() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const bufferSize = this.ctx.sampleRate * 0.28;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1000, now);
+        filter.frequency.exponentialRampToValueAtTime(70, now + 0.28);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.45, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        noise.start(now);
+      }
+
+      playHitBase() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(60, now + 0.35);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      }
+
+      playFanfare() {
+        if (!this.enabled || !this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        const now = this.ctx.currentTime;
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.11);
+          gain.gain.setValueAtTime(0.3, now + idx * 0.11);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.11 + 0.26);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.11);
+          osc.stop(now + idx * 0.11 + 0.26);
+        });
+      }
+    }
+
+    /* =====================================================================
+       2. 關卡與題庫設定 (5 關，每關 40 擊 / 滿分 40 分)
+       ===================================================================== */
+    const LEVEL_CONFIGS = [
+      {
+        level: 1,
+        title: "Level 1: 能量護盾初試 (純大寫字母)",
+        desc: "目標全為【大寫字母】！請練習【按住 Shift 鍵】充能發射穿甲雷射！",
+        type: "single",
+        case: "upper",
+        pool: "ASDFJKLGHQWERTYUIOPZXCVBNM".split(''),
+        targetScore: 40,
+        speed: 0.65
+      },
+      {
+        level: 2,
+        title: "Level 2: 近地浮石清掃 (純小寫字母)",
+        desc: "目標全為【小寫字母】！放開 Shift 鍵，以平穩節奏擊碎太空隕石！",
+        type: "single",
+        case: "lower",
+        pool: "asdfjklghqwertyuiopzxcvbnm".split(''),
+        targetScore: 40,
+        speed: 0.75
+      },
+      {
+        level: 3,
+        title: "Level 3: 雙子星混合波 (大小寫切換)",
+        desc: "【大小寫混合】交替襲來！注意辨別目標是否有護盾，即時切換 Shift！",
+        type: "single",
+        case: "mixed",
+        pool: "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ".split(''),
+        targetScore: 40,
+        speed: 0.85
+      },
+      {
+        level: 4,
+        title: "Level 4: 星際導航解碼 (首字大寫單字)",
+        desc: "巡航信標艦來襲！每字【首字母大寫】，後續為小寫。逐字命中得 1 分！",
+        type: "word",
+        pool: ["Sun", "Moon", "Star", "Mars", "Earth", "Orbit", "Alien", "Comet", "Space", "Venus", "Laser", "Pilot", "Solar"],
+        targetScore: 40,
+        speed: 0.55
+      },
+      {
+        level: 5,
+        title: "Level 5: 終極母艦決戰 (外星代碼綜合挑戰)",
+        desc: "外星母艦防衛網！包含長單字與縮寫（如 NASA、Galaxy），集中火力擊沉它！",
+        type: "word",
+        pool: ["NASA", "Rocket", "Galaxy", "Planet", "Cosmos", "Apollo", "Shield", "Invader", "Shuttle", "Jupiter", "Meteor"],
+        targetScore: 40,
+        speed: 0.6
+      }
+    ];
+
+    // 鍵盤左右分工配置表 (用於智能 Shift 提示)
+    const LEFT_HAND_KEYS = new Set(['q','w','e','r','t','a','s','d','f','g','z','x','c','v','b']);
+    const RIGHT_HAND_KEYS = new Set(['y','u','i','o','p','h','j','k','l','n','m']);
+
+    /* =====================================================================
+       3. 遊戲主核心 (Game Engine)
+       ===================================================================== */
+    class SpacePatrolGame {
+      constructor() {
+        this.canvas = document.getElementById('game-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.sound = new SoundEngine();
+
+        // 狀態變數
+        this.currentLevelIdx = 0;
+        this.levelScore = 0;      // 0 ~ 40
+        this.totalScore = 0;      // 0 ~ 200
+        this.shield = 100;        // 0 ~ 100
+        this.isPaused = false;
+        this.isPlaying = false;
+
+        // 統計變數
+        this.totalKeystrokes = 0;
+        this.correctKeystrokes = 0;
+        this.levelStartTime = 0;
+
+        // 畫面實體
+        this.stars = [];
+        this.targets = [];
+        this.lasers = [];
+        this.particles = [];
+        this.playerX = 0;
+
+        this.initCanvasSize();
+        this.initStars();
+        this.bindEvents();
+        this.loop = this.loop.bind(this);
+        requestAnimationFrame(this.loop);
+      }
+
+      initCanvasSize() {
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        this.canvas.width = rect.width;
+        this.canvas.height = rect.height;
+        this.playerX = this.canvas.width / 2;
+      }
+
+      initStars() {
+        this.stars = [];
+        const count = 90;
+        for (let i = 0; i < count; i++) {
+          this.stars.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            size: Math.random() * 2 + 0.5,
+            speed: Math.random() * 0.8 + 0.2,
+            alpha: Math.random() * 0.7 + 0.3
+          });
+        }
+      }
+
+      bindEvents() {
+        window.addEventListener('resize', () => this.initCanvasSize());
+
+        // 按鍵監聽
+        window.addEventListener('keydown', (e) => this.handleKeyDown(e));
+
+        // UI 按鈕
+        document.getElementById('btn-sound').addEventListener('click', () => {
+          this.sound.init();
+          this.sound.enabled = !this.sound.enabled;
+          document.getElementById('btn-sound').innerText = this.sound.enabled ? "🔊 音效: 開" : "🔇 音效: 關";
+        });
+
+        document.getElementById('btn-pause').addEventListener('click', () => {
+          if (!this.isPlaying) return;
+          this.isPaused = !this.isPaused;
+          document.getElementById('btn-pause').innerText = this.isPaused ? "▶ 繼續" : "⏸ 暫停";
+        });
+
+        document.getElementById('btn-start-game').addEventListener('click', () => {
+          this.sound.init();
+          document.getElementById('modal-start').classList.remove('active');
+          this.startLevel(0);
+        });
+
+        document.getElementById('btn-next-level').addEventListener('click', () => {
+          document.getElementById('modal-clear').classList.remove('active');
+          if (this.currentLevelIdx + 1 < LEVEL_CONFIGS.length) {
+            this.startLevel(this.currentLevelIdx + 1);
+          } else {
+            this.showVictoryScreen();
+          }
+        });
+
+        document.getElementById('btn-retry-level').addEventListener('click', () => {
+          document.getElementById('modal-over').classList.remove('active');
+          this.startLevel(this.currentLevelIdx);
+        });
+
+        document.getElementById('btn-play-again').addEventListener('click', () => {
+          document.getElementById('modal-victory').classList.remove('active');
+          this.totalScore = 0;
+          this.startLevel(0);
+        });
+      }
+
+      startLevel(idx) {
+        this.currentLevelIdx = idx;
+        this.levelScore = 0;
+        this.shield = 100;
+        this.targets = [];
+        this.lasers = [];
+        this.particles = [];
+        this.isPaused = false;
+        this.isPlaying = true;
+        this.levelStartTime = Date.now();
+
+        this.updateHUD();
+        this.updateKeyboardHint();
+      }
+
+      spawnTarget() {
+        const cfg = LEVEL_CONFIGS[this.currentLevelIdx];
+        if (this.levelScore >= cfg.targetScore) return;
+
+        // 計算目前畫面上已經擁有的目標擊發數總額，避免超出 40 分
+        let existingMarks = 0;
+        this.targets.forEach(t => {
+          existingMarks += (t.type === 'single' ? 1 : (t.text.length - t.charIdx));
+        });
+        if (this.levelScore + existingMarks >= cfg.targetScore) return;
+
+        const margin = 70;
+        const x = margin + Math.random() * (this.canvas.width - margin * 2);
+        const y = -40;
+
+        if (cfg.type === 'single') {
+          // 單一字母目標
+          const char = cfg.pool[Math.floor(Math.random() * cfg.pool.length)];
+          const isUpper = (char === char.toUpperCase());
+          this.targets.push({
+            type: 'single',
+            text: char,
+            isUpper: isUpper,
+            x: x,
+            y: y,
+            speed: cfg.speed + Math.random() * 0.2,
+            radius: 28,
+            shieldAngle: 0
+          });
+        } else {
+          // 單字型信標戰艦 (Level 4 & 5)
+          const word = cfg.pool[Math.floor(Math.random() * cfg.pool.length)];
+          this.targets.push({
+            type: 'word',
+            text: word,
+            charIdx: 0, // 當前正等待擊中的字母索引
+            x: x,
+            y: y,
+            speed: cfg.speed * 0.8,
+            width: 32 + word.length * 24,
+            height: 44
+          });
+        }
+      }
+
+      handleKeyDown(e) {
+        if (!this.isPlaying || this.isPaused) return;
+
+        // 檢查 Caps Lock 狀態提醒
+        if (e.getModifierState && e.getModifierState('CapsLock')) {
+          this.showToast("⚠️ 請關閉 Caps Lock！請習慣按住 Shift 鍵打大寫！");
+        }
+
+        // 僅處理單一可列印字元或 Shift
+        if (e.key === 'Shift') return;
+        if (e.key.length !== 1) return;
+
+        const typedKey = e.key;
+        this.totalKeystrokes++;
+
+        // 實體按鍵視覺回饋
+        this.highlightPhysicalKey(typedKey.toLowerCase());
+
+        // 尋找最近且匹配的目標
+        let matchedTarget = null;
+        let isCaseMismatch = false;
+
+        // 依 y 軸排序，優先攻擊最靠近底部的目標
+        const sortedTargets = [...this.targets].sort((a, b) => b.y - a.y);
+
+        for (const t of sortedTargets) {
+          if (t.type === 'single') {
+            if (t.text === typedKey) {
+              matchedTarget = t;
+              break;
+            } else if (t.text.toLowerCase() === typedKey.toLowerCase()) {
+              // 字母正確但大小寫錯誤（例如忘了按 Shift）
+              isCaseMismatch = true;
+              matchedTarget = t;
+              break;
+            }
+          } else {
+            // 單字型目標
+            const expectedChar = t.text[t.charIdx];
+            if (expectedChar === typedKey) {
+              matchedTarget = t;
+              break;
+            } else if (expectedChar.toLowerCase() === typedKey.toLowerCase()) {
+              isCaseMismatch = true;
+              matchedTarget = t;
+              break;
+            }
+          }
+        }
+
+        if (matchedTarget) {
+          if (isCaseMismatch) {
+            // 大小寫不合：播放彈射音效、跳出警告，不扣血
+            const expected = (matchedTarget.type === 'single') ? matchedTarget.text : matchedTarget.text[matchedTarget.charIdx];
+            if (expected === expected.toUpperCase()) {
+              this.showToast(`⚠️ 目標是大寫【${expected}】！請按住 Shift 鍵充能發射！`);
+            } else {
+              this.showToast(`⚠️ 目標是小寫【${expected}】！請鬆開 Shift 鍵！`);
+            }
+            this.sound.playDeflect();
+            this.createSparks(matchedTarget.x, matchedTarget.y, '#ff3838');
+          } else {
+            // 命中成功！一發一分 (One Shot, One Mark)
+            this.correctKeystrokes++;
+            this.levelScore++;
+            this.totalScore++;
+
+            const isUpper = (typedKey === typedKey.toUpperCase() && typedKey.toLowerCase() !== typedKey.toUpperCase());
+            this.sound.playLaser(isUpper);
+
+            // 產生雷射光束
+            this.lasers.push({
+              startX: this.playerX,
+              startY: this.canvas.height - 50,
+              targetX: matchedTarget.x,
+              targetY: matchedTarget.y,
+              progress: 0,
+              isCharged: isUpper
+            });
+
+            if (matchedTarget.type === 'single') {
+              // 單一目標被擊毀
+              this.createExplosion(matchedTarget.x, matchedTarget.y, isUpper ? '#ff007f' : '#00f0ff');
+              this.targets = this.targets.filter(t => t !== matchedTarget);
+              this.sound.playExplosion();
+            } else {
+              // 單字目標擊中一字母
+              matchedTarget.charIdx++;
+              this.createSparks(matchedTarget.x, matchedTarget.y, isUpper ? '#ffe600' : '#00f0ff');
+
+              // 若單字全部字母皆打完，整艦爆炸
+              if (matchedTarget.charIdx >= matchedTarget.text.length) {
+                this.createExplosion(matchedTarget.x, matchedTarget.y, '#ffe600');
+                this.targets = this.targets.filter(t => t !== matchedTarget);
+                this.sound.playExplosion();
+              }
+            }
+
+            this.updateHUD();
+            this.updateKeyboardHint();
+
+            // 檢查是否達成 40 分通關
+            if (this.levelScore >= LEVEL_CONFIGS[this.currentLevelIdx].targetScore) {
+              this.handleLevelClear();
+            }
+          }
+        }
+      }
+
+      showToast(msg) {
+        const el = document.getElementById('toast-msg');
+        el.innerText = msg;
+        el.classList.add('show');
+        clearTimeout(this.toastTimer);
+        this.toastTimer = setTimeout(() => {
+          el.classList.remove('show');
+        }, 1800);
+      }
+
+      createExplosion(x, y, color) {
+        for (let i = 0; i < 22; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 4 + 1.5;
+          this.particles.push({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            radius: Math.random() * 3 + 1.5,
+            color: color,
+            alpha: 1,
+            decay: Math.random() * 0.03 + 0.02
+          });
+        }
+      }
+
+      createSparks(x, y, color) {
+        for (let i = 0; i < 10; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 2.5 + 1;
+          this.particles.push({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            radius: Math.random() * 2 + 1,
+            color: color,
+            alpha: 1,
+            decay: 0.05
+          });
+        }
+      }
+
+      handleLevelClear() {
+        this.isPlaying = false;
+        this.sound.playFanfare();
+
+        const durationMinutes = (Date.now() - this.levelStartTime) / 60000;
+        const wpm = Math.round((this.correctKeystrokes / 5) / (durationMinutes || 0.1)) || 0;
+        const accuracy = Math.round((this.correctKeystrokes / (this.totalKeystrokes || 1)) * 100);
+
+        document.getElementById('clear-level-text').innerText = `恭喜防衛成功！${LEVEL_CONFIGS[this.currentLevelIdx].title}`;
+        document.getElementById('stat-level-score').innerText = `${this.levelScore} / 40`;
+        document.getElementById('stat-accuracy').innerText = `${accuracy}%`;
+        document.getElementById('stat-wpm').innerText = `${wpm} WPM`;
+        document.getElementById('stat-cum-score').innerText = `${this.totalScore} / 200`;
+
+        document.getElementById('modal-clear').classList.add('active');
+      }
+
+      handleGameOver() {
+        this.isPlaying = false;
+        document.getElementById('modal-over').classList.add('active');
+      }
+
+      showVictoryScreen() {
+        this.isPlaying = false;
+        const accuracy = Math.round((this.correctKeystrokes / (this.totalKeystrokes || 1)) * 100);
+        let rank = "星際巡防兵 ⭐";
+        if (this.totalScore >= 190 && accuracy >= 90) rank = "星際特級上校 ⭐⭐⭐";
+        else if (this.totalScore >= 160) rank = "星際精英領航長 ⭐⭐";
+
+        document.getElementById('stat-final-score').innerText = `${this.totalScore} / 200`;
+        document.getElementById('stat-final-rank').innerText = rank;
+        document.getElementById('stat-final-acc').innerText = `${accuracy}%`;
+        document.getElementById('stat-final-shots').innerText = `${this.totalScore} 發全部命中`;
+
+        document.getElementById('modal-victory').classList.add('active');
+      }
+
+      updateHUD() {
+        document.getElementById('hud-level').innerText = `Lv.${this.currentLevelIdx + 1}`;
+        document.getElementById('hud-level-score').innerText = `${this.levelScore} / 40`;
+        document.getElementById('hud-total-score').innerText = `${this.totalScore} / 200`;
+
+        const shieldBar = document.getElementById('hud-shield');
+        shieldBar.style.width = `${Math.max(0, this.shield)}%`;
+        if (this.shield <= 30) {
+          shieldBar.style.background = 'linear-gradient(90deg, #ff3838, #ff7700)';
+        } else {
+          shieldBar.style.background = 'linear-gradient(90deg, #00f0ff, #39ff14)';
+        }
+      }
+
+      updateKeyboardHint() {
+        // 重置所有鍵盤高亮
+        document.querySelectorAll('.key').forEach(k => {
+          k.classList.remove('active-target', 'active-shift');
+        });
+
+        if (this.targets.length === 0) {
+          document.getElementById('kb-hint').innerText = "💡 雷達搜尋目標中...";
+          return;
+        }
+
+        // 取得最靠近底部的目標字母
+        const lowestTarget = [...this.targets].sort((a, b) => b.y - a.y)[0];
+        let nextChar = "";
+        if (lowestTarget.type === 'single') {
+          nextChar = lowestTarget.text;
+        } else {
+          nextChar = lowestTarget.text[lowestTarget.charIdx];
+        }
+
+        const isUpper = (nextChar === nextChar.toUpperCase() && nextChar.toLowerCase() !== nextChar.toUpperCase());
+        const lowerChar = nextChar.toLowerCase();
+
+        // 標記目標字母鍵
+        const targetKeyEl = document.querySelector(`.key[data-key="${lowerChar}"]`);
+        if (targetKeyEl) {
+          targetKeyEl.classList.add('active-target');
+        }
+
+        // 若是大寫，依右手/左手對稱高亮對應的 Shift 鍵
+        if (isUpper) {
+          if (RIGHT_HAND_KEYS.has(lowerChar)) {
+            // 右手字母 -> 用左手按 Left Shift
+            document.getElementById('key-shift-left').classList.add('active-shift');
+            document.getElementById('kb-hint').innerHTML = `💡 目標大寫【<strong>${nextChar}</strong>】：右手打字母，<strong>左手按住 [Left Shift]</strong> 充能！`;
+          } else {
+            // 左手字母 -> 用右手按 Right Shift
+            document.getElementById('key-shift-right').classList.add('active-shift');
+            document.getElementById('kb-hint').innerHTML = `💡 目標大寫【<strong>${nextChar}</strong>】：左手打字母，<strong>右手按住 [Right Shift]</strong> 充能！`;
+          }
+        } else {
+          document.getElementById('kb-hint').innerHTML = `💡 目標小寫【<strong>${nextChar}</strong>】：直接輕按字母鍵擊發！`;
+        }
+      }
+
+      highlightPhysicalKey(char) {
+        const keyEl = document.querySelector(`.key[data-key="${char}"]`);
+        if (keyEl) {
+          keyEl.classList.add('pressed');
+          setTimeout(() => keyEl.classList.remove('pressed'), 120);
+        }
+      }
+
+      /* ================= 遊戲循環 (Loop) ================= */
+      loop() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // 繪製背景星空
+        this.renderStars();
+
+        if (this.isPlaying && !this.isPaused) {
+          // 目標生成管理：畫面上維持 2~3 個目標
+          if (this.targets.length < 3 && Math.random() < 0.025) {
+            this.spawnTarget();
+          }
+
+          // 更新目標位置
+          this.updateTargets();
+        }
+
+        // 繪製所有實體
+        this.renderTargets();
+        this.renderLasers();
+        this.renderParticles();
+        this.renderPlayerShip();
+
+        requestAnimationFrame(this.loop);
+      }
+
+      renderStars() {
+        this.ctx.fillStyle = '#ffffff';
+        for (const s of this.stars) {
+          if (this.isPlaying && !this.isPaused) {
+            s.y += s.speed;
+            if (s.y > this.canvas.height) {
+              s.y = 0;
+              s.x = Math.random() * this.canvas.width;
+            }
+          }
+          this.ctx.globalAlpha = s.alpha;
+          this.ctx.fillRect(s.x, s.y, s.size, s.size);
+        }
+        this.ctx.globalAlpha = 1.0;
+      }
+
+      updateTargets() {
+        for (let i = this.targets.length - 1; i >= 0; i--) {
+          const t = this.targets[i];
+          t.y += t.speed;
+          if (t.shieldAngle !== undefined) t.shieldAngle += 0.04;
+
+          // 撞擊底線防護罩
+          if (t.y > this.canvas.height - 70) {
+            this.shield -= 15;
+            this.sound.playHitBase();
+            this.createExplosion(t.x, this.canvas.height - 60, '#ff3838');
+            this.targets.splice(i, 1);
+            this.updateHUD();
+            this.updateKeyboardHint();
+
+            if (this.shield <= 0) {
+              this.handleGameOver();
+              break;
+            }
+          }
+        }
+      }
+
+      renderTargets() {
+        for (const t of this.targets) {
+          if (t.type === 'single') {
+            // 單一目標 (Level 1, 2, 3)
+            this.ctx.save();
+            this.ctx.translate(t.x, t.y);
+
+            if (t.isUpper) {
+              // 大寫裝甲機：帶金色/紫粉旋轉光環護盾
+              this.ctx.save();
+              this.ctx.rotate(t.shieldAngle);
+              this.ctx.strokeStyle = '#ff007f';
+              this.ctx.lineWidth = 2.5;
+              this.ctx.setLineDash([8, 6]);
+              this.ctx.beginPath();
+              this.ctx.arc(0, 0, 32, 0, Math.PI * 2);
+              this.ctx.stroke();
+              this.ctx.restore();
+
+              // 機體
+              this.ctx.fillStyle = '#261338';
+              this.ctx.strokeStyle = '#ff007f';
+              this.ctx.lineWidth = 2;
+              this.ctx.beginPath();
+              this.ctx.moveTo(0, 20);
+              this.ctx.lineTo(24, -12);
+              this.ctx.lineTo(-24, -12);
+              this.ctx.closePath();
+              this.ctx.fill();
+              this.ctx.stroke();
+
+              // 大寫字母
+              this.ctx.fillStyle = '#ffe600';
+              this.ctx.font = 'bold 24px "Courier New", monospace';
+              this.ctx.textAlign = 'center';
+              this.ctx.textBaseline = 'middle';
+              this.ctx.shadowColor = '#ffe600';
+              this.ctx.shadowBlur = 10;
+              this.ctx.fillText(t.text, 0, 0);
+
+            } else {
+              // 小寫隕石：多面體多邊形
+              this.ctx.fillStyle = '#17223b';
+              this.ctx.strokeStyle = '#00f0ff';
+              this.ctx.lineWidth = 2;
+              this.ctx.beginPath();
+              this.ctx.moveTo(0, -26);
+              this.ctx.lineTo(22, -12);
+              this.ctx.lineTo(20, 18);
+              this.ctx.lineTo(-6, 26);
+              this.ctx.lineTo(-24, 10);
+              this.ctx.lineTo(-18, -16);
+              this.ctx.closePath();
+              this.ctx.fill();
+              this.ctx.stroke();
+
+              // 小寫字母
+              this.ctx.fillStyle = '#ffffff';
+              this.ctx.font = 'bold 24px "Courier New", monospace';
+              this.ctx.textAlign = 'center';
+              this.ctx.textBaseline = 'middle';
+              this.ctx.shadowColor = '#00f0ff';
+              this.ctx.shadowBlur = 8;
+              this.ctx.fillText(t.text, 0, 0);
+            }
+
+            this.ctx.restore();
+
+          } else {
+            // 單字信標巡航艦 (Level 4, 5)
+            this.ctx.save();
+            this.ctx.translate(t.x, t.y);
+
+            // 艦身本體
+            this.ctx.fillStyle = '#10172d';
+            this.ctx.strokeStyle = '#00f0ff';
+            this.ctx.lineWidth = 2;
+            const w = t.width;
+            const h = t.height;
+            this.ctx.beginPath();
+            this.ctx.roundRect(-w / 2, -h / 2, w, h, 8);
+            this.ctx.fill();
+            this.ctx.stroke();
+
+            // 繪製單字內各字母卡槽
+            const charW = 22;
+            const startX = -((t.text.length * charW) / 2) + charW / 2;
+
+            for (let i = 0; i < t.text.length; i++) {
+              const char = t.text[i];
+              const cx = startX + i * charW;
+              const isCurrent = (i === t.charIdx);
+              const isDone = (i < t.charIdx);
+              const isUpper = (char === char.toUpperCase() && char.toLowerCase() !== char.toUpperCase());
+
+              this.ctx.font = 'bold 20px "Courier New", monospace';
+              this.ctx.textAlign = 'center';
+              this.ctx.textBaseline = 'middle';
+
+              if (isDone) {
+                // 已擊中：暗淡淡綠
+                this.ctx.fillStyle = '#39ff14';
+                this.ctx.shadowBlur = 0;
+                this.ctx.fillText(char, cx, 0);
+              } else if (isCurrent) {
+                // 當前待擊中：高亮框與呼吸光
+                this.ctx.fillStyle = isUpper ? '#ffe600' : '#00f0ff';
+                this.ctx.shadowColor = isUpper ? '#ffe600' : '#00f0ff';
+                this.ctx.shadowBlur = 12;
+                this.ctx.fillText(char, cx, 0);
+
+                // 外圍高亮提示框
+                this.ctx.strokeStyle = isUpper ? '#ffe600' : '#00f0ff';
+                this.ctx.lineWidth = 1.8;
+                this.ctx.strokeRect(cx - 10, -14, 20, 28);
+              } else {
+                // 尚未擊中：灰白色
+                this.ctx.fillStyle = '#64748b';
+                this.ctx.shadowBlur = 0;
+                this.ctx.fillText(char, cx, 0);
+              }
+            }
+
+            this.ctx.restore();
+          }
+        }
+      }
+
+      renderLasers() {
+        for (let i = this.lasers.length - 1; i >= 0; i--) {
+          const l = this.lasers[i];
+          l.progress += 0.22;
+
+          this.ctx.save();
+          this.ctx.strokeStyle = l.isCharged ? '#ff007f' : '#00f0ff';
+          this.ctx.lineWidth = l.isCharged ? 4 : 2.5;
+          this.ctx.shadowColor = l.isCharged ? '#ff007f' : '#00f0ff';
+          this.ctx.shadowBlur = 12;
+
+          this.ctx.beginPath();
+          this.ctx.moveTo(l.startX, l.startY);
+          const curX = l.startX + (l.targetX - l.startX) * Math.min(1, l.progress);
+          const curY = l.startY + (l.targetY - l.startY) * Math.min(1, l.progress);
+          this.ctx.lineTo(curX, curY);
+          this.ctx.stroke();
+          this.ctx.restore();
+
+          if (l.progress >= 1.0) {
+            this.lasers.splice(i, 1);
+          }
+        }
+      }
+
+      renderParticles() {
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= p.decay;
+
+          if (p.alpha <= 0) {
+            this.particles.splice(i, 1);
+            continue;
+          }
+
+          this.ctx.save();
+          this.ctx.globalAlpha = p.alpha;
+          this.ctx.fillStyle = p.color;
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.restore();
+        }
+      }
+
+      renderPlayerShip() {
+        const x = this.playerX;
+        const y = this.canvas.height - 35;
+
+        this.ctx.save();
+        this.ctx.translate(x, y);
+
+        // 噴射尾焰
+        const flameH = 12 + Math.random() * 8;
+        this.ctx.fillStyle = '#ff7700';
+        this.ctx.beginPath();
+        this.ctx.moveTo(-8, 12);
+        this.ctx.lineTo(0, 12 + flameH);
+        this.ctx.lineTo(8, 12);
+        this.ctx.fill();
+
+        this.ctx.fillStyle = '#ffe600';
+        this.ctx.beginPath();
+        this.ctx.moveTo(-4, 12);
+        this.ctx.lineTo(0, 12 + flameH * 0.6);
+        this.ctx.lineTo(4, 12);
+        this.ctx.fill();
+
+        // 機翼與機身
+        this.ctx.fillStyle = '#0f172a';
+        this.ctx.strokeStyle = '#00f0ff';
+        this.ctx.lineWidth = 2.2;
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, -25);
+        this.ctx.lineTo(24, 12);
+        this.ctx.lineTo(12, 14);
+        this.ctx.lineTo(0, 6);
+        this.ctx.lineTo(-12, 14);
+        this.ctx.lineTo(-24, 12);
+        this.ctx.closePath();
+        this.ctx.fill();
+        this.ctx.stroke();
+
+        // 機首駕駛艙
+        this.ctx.fillStyle = '#00f0ff';
+        this.ctx.beginPath();
+        this.ctx.arc(0, -6, 4, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        this.ctx.restore();
+      }
+    }
+
+    // 初始化啟動
+    window.addEventListener('load', () => {
+      new SpacePatrolGame();
+    });
+  </script>
+</body>
+</html>
