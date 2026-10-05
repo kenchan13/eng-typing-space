@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>星際巡邏隊：字母防衛戰 - Space Type Patrol</title>
+  <title>星際巡邏隊：大寫字母防衛戰 - Space Type Patrol</title>
   <style>
     :root {
       --bg-dark: #070913;
-      --panel-bg: rgba(13, 17, 34, 0.88);
+      --panel-bg: rgba(13, 17, 34, 0.92);
       --neon-cyan: #00f0ff;
       --neon-pink: #ff007f;
       --neon-gold: #ffe600;
@@ -43,7 +43,7 @@
       width: 100%;
       max-width: 1100px;
       height: 96vh;
-      max-height: 820px;
+      max-height: 840px;
       background: radial-gradient(circle at 50% 20%, #171133 0%, #060812 80%);
       border: 2px solid #232c4d;
       border-radius: 14px;
@@ -61,14 +61,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
+      padding: 0 20px;
       z-index: 10;
     }
 
     .hud-group {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
     }
 
     .hud-item {
@@ -77,7 +77,7 @@
     }
 
     .hud-label {
-      font-size: 0.72rem;
+      font-size: 0.70rem;
       color: var(--text-dim);
       letter-spacing: 1px;
       text-transform: uppercase;
@@ -98,7 +98,7 @@
 
     /* 護盾血條 */
     .shield-container {
-      width: 140px;
+      width: 130px;
       height: 12px;
       background: #1e293b;
       border-radius: 6px;
@@ -114,7 +114,7 @@
       transition: width 0.25s ease, background 0.25s ease;
     }
 
-    /* 按鈕 */
+    /* 按鈕與選單 */
     .btn-icon {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(0, 240, 255, 0.4);
@@ -134,6 +134,18 @@
       background: var(--neon-cyan);
       color: #000;
       box-shadow: 0 0 12px var(--neon-cyan);
+    }
+
+    .level-select {
+      background: #10162b;
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-gold);
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
     }
 
     /* 遊戲畫布 */
@@ -156,17 +168,18 @@
       top: 15px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255, 56, 56, 0.9);
+      background: rgba(255, 56, 56, 0.92);
       color: #fff;
-      padding: 8px 20px;
+      padding: 9px 24px;
       border-radius: 20px;
       font-size: 0.95rem;
       font-weight: bold;
-      box-shadow: 0 0 15px rgba(255, 56, 56, 0.8);
+      box-shadow: 0 0 18px rgba(255, 56, 56, 0.8);
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
       z-index: 25;
+      text-align: center;
     }
 
     #toast-msg.show {
@@ -176,7 +189,7 @@
 
     /* 底部智慧鍵盤指引區 */
     #keyboard-panel {
-      background: rgba(8, 11, 22, 0.95);
+      background: rgba(8, 11, 22, 0.96);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       padding: 10px 14px 14px;
       display: flex;
@@ -187,17 +200,18 @@
     }
 
     .kb-hint-text {
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       color: var(--neon-gold);
       margin-bottom: 2px;
       display: flex;
       align-items: center;
       gap: 8px;
+      text-align: center;
     }
 
     .kb-row {
       display: flex;
-      gap: 5px;
+      gap: 6px;
     }
 
     .key {
@@ -205,7 +219,7 @@
       color: #cbd5e1;
       font-family: 'Courier New', monospace;
       font-weight: 700;
-      font-size: 0.88rem;
+      font-size: 0.92rem;
       min-width: 38px;
       height: 38px;
       border-radius: 6px;
@@ -213,12 +227,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
     }
 
+    .key:hover {
+      background: #232c4d;
+      border-color: var(--neon-cyan);
+    }
+
     .key.wide-shift {
-      min-width: 90px;
-      font-size: 0.78rem;
+      min-width: 95px;
+      font-size: 0.8rem;
       color: #94a3b8;
     }
 
@@ -227,7 +247,7 @@
       color: #000 !important;
       font-weight: 900;
       border-color: #fff !important;
-      box-shadow: 0 0 12px var(--neon-cyan);
+      box-shadow: 0 0 14px var(--neon-cyan);
       transform: translateY(-2px);
     }
 
@@ -344,22 +364,6 @@
       transform: translateY(-2px);
       box-shadow: 0 0 25px rgba(0, 240, 255, 0.7);
     }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text-dim);
-      border: 1px solid #475569;
-      padding: 10px 20px;
-      border-radius: 8px;
-      margin-left: 10px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      transition: all 0.2s;
-    }
-    .btn-secondary:hover {
-      border-color: #cbd5e1;
-      color: #fff;
-    }
   </style>
 </head>
 <body>
@@ -369,11 +373,17 @@
     <div id="hud">
       <div class="hud-group">
         <div class="hud-item">
-          <span class="hud-label">當前關卡 (Level)</span>
-          <span id="hud-level" class="hud-value">Lv.1</span>
+          <span class="hud-label">目前關卡 (Level)</span>
+          <select id="level-select" class="level-select">
+            <option value="0">Lv.1: 基準鍵 (極超慢速)</option>
+            <option value="1">Lv.2: 上排鍵 (極慢速)</option>
+            <option value="2">Lv.3: 下排鍵 (慢速)</option>
+            <option value="3">Lv.4: 雙手綜合 (平穩慢速)</option>
+            <option value="4">Lv.5: 終極艦隊 (全鍵盤挑戰)</option>
+          </select>
         </div>
         <div class="hud-item">
-          <span class="hud-label">任務進度 (40 擊滿分)</span>
+          <span class="hud-label">本關進度 (40 擊滿分)</span>
           <span id="hud-level-score" class="hud-value gold">0 / 40</span>
         </div>
         <div class="hud-item">
@@ -409,39 +419,39 @@
       </div>
       <!-- 鍵盤 Row 1 -->
       <div class="kb-row">
-        <div class="key" data-key="q">Q</div>
-        <div class="key" data-key="w">W</div>
-        <div class="key" data-key="e">E</div>
-        <div class="key" data-key="r">R</div>
-        <div class="key" data-key="t">T</div>
-        <div class="key" data-key="y">Y</div>
-        <div class="key" data-key="u">U</div>
-        <div class="key" data-key="i">I</div>
-        <div class="key" data-key="o">O</div>
-        <div class="key" data-key="p">P</div>
+        <div class="key" data-key="Q">Q</div>
+        <div class="key" data-key="W">W</div>
+        <div class="key" data-key="E">E</div>
+        <div class="key" data-key="R">R</div>
+        <div class="key" data-key="T">T</div>
+        <div class="key" data-key="Y">Y</div>
+        <div class="key" data-key="U">U</div>
+        <div class="key" data-key="I">I</div>
+        <div class="key" data-key="O">O</div>
+        <div class="key" data-key="P">P</div>
       </div>
       <!-- 鍵盤 Row 2 -->
       <div class="kb-row">
-        <div class="key" data-key="a">A</div>
-        <div class="key" data-key="s">S</div>
-        <div class="key" data-key="d">D</div>
-        <div class="key" data-key="f">F</div>
-        <div class="key" data-key="g">G</div>
-        <div class="key" data-key="h">H</div>
-        <div class="key" data-key="j">J</div>
-        <div class="key" data-key="k">K</div>
-        <div class="key" data-key="l">L</div>
+        <div class="key" data-key="A">A</div>
+        <div class="key" data-key="S">S</div>
+        <div class="key" data-key="D">D</div>
+        <div class="key" data-key="F">F</div>
+        <div class="key" data-key="G">G</div>
+        <div class="key" data-key="H">H</div>
+        <div class="key" data-key="J">J</div>
+        <div class="key" data-key="K">K</div>
+        <div class="key" data-key="L">L</div>
       </div>
       <!-- 鍵盤 Row 3 (包含左右 Shift) -->
       <div class="kb-row">
         <div class="key wide-shift" id="key-shift-left">Left Shift</div>
-        <div class="key" data-key="z">Z</div>
-        <div class="key" data-key="x">X</div>
-        <div class="key" data-key="c">C</div>
-        <div class="key" data-key="v">V</div>
-        <div class="key" data-key="b">B</div>
-        <div class="key" data-key="n">N</div>
-        <div class="key" data-key="m">M</div>
+        <div class="key" data-key="Z">Z</div>
+        <div class="key" data-key="X">X</div>
+        <div class="key" data-key="C">C</div>
+        <div class="key" data-key="V">V</div>
+        <div class="key" data-key="B">B</div>
+        <div class="key" data-key="N">N</div>
+        <div class="key" data-key="M">M</div>
         <div class="key wide-shift" id="key-shift-right">Right Shift</div>
       </div>
     </div>
@@ -449,13 +459,14 @@
     <!-- 彈窗：遊戲開始畫面 -->
     <div id="modal-start" class="modal-overlay active">
       <div class="modal-card">
-        <h2 class="modal-title">🚀 星際巡邏隊：字母防衛戰</h2>
+        <h2 class="modal-title">🚀 星際巡邏隊：大寫字母防衛戰</h2>
         <p class="modal-desc">
-          指揮官！未知外星部隊正在進犯地球軌道！<br>
-          請運用雷射主砲精準打擊字母目標。<br><br>
-          • <strong>每按對 1 個字母 = 射擊 1 次 = 得 1 分</strong><br>
-          • <strong>每關目標：擊中 40 發（滿分 40 分）</strong><br>
-          • 遇到大寫字母時，請練習<strong>按住 Shift 鍵</strong>充能！
+          指揮官！全 5 關全面採用<strong>【單一大寫字母】</strong>慢速訓練！<br>
+          下落速度已<strong>全面大幅減速</strong>，讓您有充裕時間精準練習。<br><br>
+          • <strong>目標全為大寫字母</strong>：請練習【按住 Shift 鍵】擊發！<br>
+          • <strong>每擊破 1 架裝甲機 = 得 1 分</strong><br>
+          • <strong>每關目標：累積 40 擊（滿分 40 分）</strong><br>
+          • 亦可直接點擊下方虛擬鍵盤按鈕進行操作！
         </p>
         <button id="btn-start-game" class="btn-action">立即出擊 START</button>
       </div>
@@ -477,7 +488,7 @@
           </div>
           <div class="stat-row">
             <span class="stat-label">打字速度 (WPM)</span>
-            <span id="stat-wpm" class="stat-val">42 WPM</span>
+            <span id="stat-wpm" class="stat-val">32 WPM</span>
           </div>
           <div class="stat-row">
             <span class="stat-label">累計總分</span>
@@ -492,7 +503,7 @@
     <div id="modal-over" class="modal-overlay">
       <div class="modal-card" style="border-color: var(--neon-red);">
         <h2 class="modal-title" style="color: var(--neon-red);">💥 基地防護罩破裂！</h2>
-        <p class="modal-desc">目標衝撞防護罩過多！冷靜深呼吸，調整手指姿勢再次嘗試。</p>
+        <p class="modal-desc">請不用緊張，調整手指姿勢，按住 Shift 鍵再試一次！</p>
         <button id="btn-retry-level" class="btn-action" style="background: linear-gradient(90deg, #ff3838, #ff7700);">重新挑戰本關</button>
       </div>
     </div>
@@ -501,7 +512,7 @@
     <div id="modal-victory" class="modal-overlay">
       <div class="modal-card" style="border-color: var(--neon-gold);">
         <h2 class="modal-title" style="color: var(--neon-gold);">🏆 地球防衛總司令！全通關</h2>
-        <p class="modal-desc">恭喜您順利打穿 5 大關卡！成功掌握英文大小寫與雙手 Shift 指法！</p>
+        <p class="modal-desc">太棒了！您已順利完成全部 5 大關卡的大寫字母打字訓練！</p>
         <div class="modal-stats">
           <div class="stat-row">
             <span class="stat-label">最終總得分</span>
@@ -528,7 +539,7 @@
 
   <script>
     /* =====================================================================
-       1. 音效引擎 (Web Audio API Synthesizer - 原生免載入)
+       1. 音效引擎 (Web Audio API Synthesizer - 原生免外載)
        ===================================================================== */
     class SoundEngine {
       constructor() {
@@ -552,21 +563,12 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
 
-        if (isCharged) {
-          // Shift 充能雷射：鋸齒波高頻揚升
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(450, now);
-          osc.frequency.exponentialRampToValueAtTime(1300, now + 0.16);
-          gain.gain.setValueAtTime(0.35, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
-        } else {
-          // 普通雷射：三角波俐落下降
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(880, now);
-          osc.frequency.exponentialRampToValueAtTime(180, now + 0.11);
-          gain.gain.setValueAtTime(0.28, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.11);
-        }
+        // 大寫充能雷射：鋸齒波高頻推進
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(450, now);
+        osc.frequency.exponentialRampToValueAtTime(1350, now + 0.16);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
@@ -579,8 +581,8 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(260, now);
-        osc.frequency.setValueAtTime(140, now + 0.08);
+        osc.frequency.setValueAtTime(240, now);
+        osc.frequency.setValueAtTime(130, now + 0.08);
         gain.gain.setValueAtTime(0.4, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
         osc.connect(gain);
@@ -601,8 +603,8 @@
         noise.buffer = buffer;
         const filter = this.ctx.createBiquadFilter();
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(1000, now);
-        filter.frequency.exponentialRampToValueAtTime(70, now + 0.28);
+        filter.frequency.setValueAtTime(950, now);
+        filter.frequency.exponentialRampToValueAtTime(65, now + 0.28);
 
         const gain = this.ctx.createGain();
         gain.gain.setValueAtTime(0.45, now);
@@ -620,8 +622,8 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, now);
-        osc.frequency.linearRampToValueAtTime(60, now + 0.35);
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.linearRampToValueAtTime(50, now + 0.35);
         gain.gain.setValueAtTime(0.5, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
         osc.connect(gain);
@@ -650,62 +652,54 @@
     }
 
     /* =====================================================================
-       2. 關卡與題庫設定 (5 關，每關 40 擊 / 滿分 40 分)
+       2. 關卡設定 (全部 5 關皆為單一大寫字母，速度大幅減慢，40 擊 / 滿分 40 分)
        ===================================================================== */
     const LEVEL_CONFIGS = [
       {
         level: 1,
-        title: "Level 1: 能量護盾初試 (純大寫字母)",
-        desc: "目標全為【大寫字母】！請練習【按住 Shift 鍵】充能發射穿甲雷射！",
-        type: "single",
-        case: "upper",
-        pool: "ASDFJKLGHQWERTYUIOPZXCVBNM".split(''),
+        title: "Level 1: 星際啟航 (基準鍵 A~L • 極超慢速)",
+        desc: "【單一大寫字母】超慢速飄落！專注練習【按住 Shift 鍵】擊發！",
+        pool: "ASDFJKLGH".split(''),
         targetScore: 40,
-        speed: 0.65
+        speed: 0.18 // 原版 0.65，大幅調慢到 0.18，給初學者充足反應時間！
       },
       {
         level: 2,
-        title: "Level 2: 近地浮石清掃 (純小寫字母)",
-        desc: "目標全為【小寫字母】！放開 Shift 鍵，以平穩節奏擊碎太空隕石！",
-        type: "single",
-        case: "lower",
-        pool: "asdfjklghqwertyuiopzxcvbnm".split(''),
+        title: "Level 2: 巡航推進 (上排鍵 Q~P 擴展 • 極慢速)",
+        desc: "【單一大寫字母】加入 Q, W, E, R, T... 雙手配合按住 Shift！",
+        pool: "QWERTYUIOPASDFGHJKL".split(''),
         targetScore: 40,
-        speed: 0.75
+        speed: 0.22
       },
       {
         level: 3,
-        title: "Level 3: 雙子星混合波 (大小寫切換)",
-        desc: "【大小寫混合】交替襲來！注意辨別目標是否有護盾，即時切換 Shift！",
-        type: "single",
-        case: "mixed",
-        pool: "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ".split(''),
+        title: "Level 3: 星雲穿越 (下排鍵 Z~M 擴展 • 慢速)",
+        desc: "【單一大寫字母】加入 Z, X, C, V, B, N, M，熟練全身鍵位！",
+        pool: "ZXCVBNMASDFGHJKL".split(''),
         targetScore: 40,
-        speed: 0.85
+        speed: 0.26
       },
       {
         level: 4,
-        title: "Level 4: 星際導航解碼 (首字大寫單字)",
-        desc: "巡航信標艦來襲！每字【首字母大寫】，後續為小寫。逐字命中得 1 分！",
-        type: "word",
-        pool: ["Sun", "Moon", "Star", "Mars", "Earth", "Orbit", "Alien", "Comet", "Space", "Venus", "Laser", "Pilot", "Solar"],
+        title: "Level 4: 雙子星系 (全鍵盤隨機 A~Z • 平穩慢速)",
+        desc: "【單一大寫字母】26 個大寫字母隨機出現！掌握雙手交叉 Shift！",
+        pool: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''),
         targetScore: 40,
-        speed: 0.55
+        speed: 0.30
       },
       {
         level: 5,
-        title: "Level 5: 終極母艦決戰 (外星代碼綜合挑戰)",
-        desc: "外星母艦防衛網！包含長單字與縮寫（如 NASA、Galaxy），集中火力擊沉它！",
-        type: "word",
-        pool: ["NASA", "Rocket", "Galaxy", "Planet", "Cosmos", "Apollo", "Shield", "Invader", "Shuttle", "Jupiter", "Meteor"],
+        title: "Level 5: 終極艦隊 (全方位星際大決戰 • 挑戰)",
+        desc: "【單一大寫字母】全字母總考驗！挑戰 40 發全中，成為星際特級上校！",
+        pool: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''),
         targetScore: 40,
-        speed: 0.6
+        speed: 0.35
       }
     ];
 
-    // 鍵盤左右分工配置表 (用於智能 Shift 提示)
-    const LEFT_HAND_KEYS = new Set(['q','w','e','r','t','a','s','d','f','g','z','x','c','v','b']);
-    const RIGHT_HAND_KEYS = new Set(['y','u','i','o','p','h','j','k','l','n','m']);
+    // 鍵盤左右手分工表 (對稱 Shift 導引)
+    const LEFT_HAND_KEYS = new Set(['Q','W','E','R','T','A','S','D','F','G','Z','X','C','V','B']);
+    const RIGHT_HAND_KEYS = new Set(['Y','U','I','O','P','H','J','K','L','N','M']);
 
     /* =====================================================================
        3. 遊戲主核心 (Game Engine)
@@ -723,6 +717,7 @@
         this.shield = 100;        // 0 ~ 100
         this.isPaused = false;
         this.isPlaying = false;
+        this.virtualShift = false; // 支援觸控 / 點擊虛擬鍵盤 Shift
 
         // 統計變數
         this.totalKeystrokes = 0;
@@ -758,7 +753,7 @@
             x: Math.random() * this.canvas.width,
             y: Math.random() * this.canvas.height,
             size: Math.random() * 2 + 0.5,
-            speed: Math.random() * 0.8 + 0.2,
+            speed: Math.random() * 0.6 + 0.2,
             alpha: Math.random() * 0.7 + 0.3
           });
         }
@@ -767,10 +762,40 @@
       bindEvents() {
         window.addEventListener('resize', () => this.initCanvasSize());
 
-        // 按鍵監聽
+        // 實體鍵盤監聽
         window.addEventListener('keydown', (e) => this.handleKeyDown(e));
 
-        // UI 按鈕
+        // 虛擬鍵盤點擊支援 (滑鼠或平板觸控點擊)
+        document.querySelectorAll('.key[data-key]').forEach(keyEl => {
+          keyEl.addEventListener('click', () => {
+            if (!this.isPlaying || this.isPaused) return;
+            const letter = keyEl.getAttribute('data-key').toUpperCase();
+            // 點擊虛擬按鍵時，預設自動視為包含 Shift 充能擊發
+            this.processInput(letter, true);
+          });
+        });
+
+        // 點擊左右 Shift 切換狀態
+        ['key-shift-left', 'key-shift-right'].forEach(id => {
+          const shiftBtn = document.getElementById(id);
+          if (shiftBtn) {
+            shiftBtn.addEventListener('click', () => {
+              this.virtualShift = !this.virtualShift;
+              shiftBtn.classList.toggle('active-shift', this.virtualShift);
+              this.showToast(this.virtualShift ? "⚡ 虛擬 Shift 已鎖定充能！" : "⚡ 虛擬 Shift 已解除！");
+            });
+          }
+        });
+
+        // 選關下拉選單
+        const levelSelect = document.getElementById('level-select');
+        levelSelect.addEventListener('change', (e) => {
+          const selectedIdx = parseInt(e.target.value, 10);
+          document.activeElement?.blur();
+          this.startLevel(selectedIdx);
+        });
+
+        // UI 控制按鈕
         document.getElementById('btn-sound').addEventListener('click', () => {
           this.sound.init();
           this.sound.enabled = !this.sound.enabled;
@@ -786,11 +811,13 @@
         document.getElementById('btn-start-game').addEventListener('click', () => {
           this.sound.init();
           document.getElementById('modal-start').classList.remove('active');
+          document.activeElement?.blur();
           this.startLevel(0);
         });
 
         document.getElementById('btn-next-level').addEventListener('click', () => {
           document.getElementById('modal-clear').classList.remove('active');
+          document.activeElement?.blur();
           if (this.currentLevelIdx + 1 < LEVEL_CONFIGS.length) {
             this.startLevel(this.currentLevelIdx + 1);
           } else {
@@ -800,11 +827,13 @@
 
         document.getElementById('btn-retry-level').addEventListener('click', () => {
           document.getElementById('modal-over').classList.remove('active');
+          document.activeElement?.blur();
           this.startLevel(this.currentLevelIdx);
         });
 
         document.getElementById('btn-play-again').addEventListener('click', () => {
           document.getElementById('modal-victory').classList.remove('active');
+          document.activeElement?.blur();
           this.totalScore = 0;
           this.startLevel(0);
         });
@@ -817,118 +846,92 @@
         this.targets = [];
         this.lasers = [];
         this.particles = [];
+        this.virtualShift = false;
         this.isPaused = false;
         this.isPlaying = true;
         this.levelStartTime = Date.now();
+
+        // 立即生成 2 個初始目標（垂直錯開），進入關卡後畫面不空白，學生立刻能打！
+        this.spawnTarget(75);
+        this.spawnTarget(20);
+
+        // 同步選單
+        document.getElementById('level-select').value = idx;
 
         this.updateHUD();
         this.updateKeyboardHint();
       }
 
-      spawnTarget() {
+      spawnTarget(customY) {
         const cfg = LEVEL_CONFIGS[this.currentLevelIdx];
         if (this.levelScore >= cfg.targetScore) return;
 
-        // 計算目前畫面上已經擁有的目標擊發數總額，避免超出 40 分
-        let existingMarks = 0;
-        this.targets.forEach(t => {
-          existingMarks += (t.type === 'single' ? 1 : (t.text.length - t.charIdx));
-        });
-        if (this.levelScore + existingMarks >= cfg.targetScore) return;
+        // 檢查畫面上待擊破數是否已補滿本關 40 擊
+        if (this.levelScore + this.targets.length >= cfg.targetScore) return;
 
-        const margin = 70;
+        const margin = 80;
         const x = margin + Math.random() * (this.canvas.width - margin * 2);
-        const y = -40;
+        const y = (customY !== undefined) ? customY : -35;
 
-        if (cfg.type === 'single') {
-          // 單一字母目標
-          const char = cfg.pool[Math.floor(Math.random() * cfg.pool.length)];
-          const isUpper = (char === char.toUpperCase());
-          this.targets.push({
-            type: 'single',
-            text: char,
-            isUpper: isUpper,
-            x: x,
-            y: y,
-            speed: cfg.speed + Math.random() * 0.2,
-            radius: 28,
-            shieldAngle: 0
-          });
-        } else {
-          // 單字型信標戰艦 (Level 4 & 5)
-          const word = cfg.pool[Math.floor(Math.random() * cfg.pool.length)];
-          this.targets.push({
-            type: 'word',
-            text: word,
-            charIdx: 0, // 當前正等待擊中的字母索引
-            x: x,
-            y: y,
-            speed: cfg.speed * 0.8,
-            width: 32 + word.length * 24,
-            height: 44
-          });
-        }
+        // 從題庫中隨機挑選 1 個大寫字母
+        const char = cfg.pool[Math.floor(Math.random() * cfg.pool.length)].toUpperCase();
+
+        this.targets.push({
+          text: char,
+          x: x,
+          y: y,
+          speed: cfg.speed + Math.random() * 0.05, // 保持極度緩慢
+          radius: 30,
+          shieldAngle: Math.random() * Math.PI
+        });
       }
 
       handleKeyDown(e) {
         if (!this.isPlaying || this.isPaused) return;
 
-        // 檢查 Caps Lock 狀態提醒
-        if (e.getModifierState && e.getModifierState('CapsLock')) {
-          this.showToast("⚠️ 請關閉 Caps Lock！請習慣按住 Shift 鍵打大寫！");
+        // 檢查 Caps Lock 狀態
+        const isCaps = !!(e.getModifierState && e.getModifierState('CapsLock'));
+        if (isCaps) {
+          this.showToast("💡 提示：Caps Lock 開啟中，亦可直接配合擊發大寫！");
         }
 
-        // 僅處理單一可列印字元或 Shift
-        if (e.key === 'Shift') return;
-        if (e.key.length !== 1) return;
+        // 解析按下的英文字母：優先使用 e.code (如 "KeyA" -> "A")，完全免疫中文輸入法干擾！
+        let letter = null;
+        if (e.code && e.code.startsWith('Key')) {
+          letter = e.code.slice(3).toUpperCase();
+        } else if (e.key && e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+          letter = e.key.toUpperCase();
+        }
 
-        const typedKey = e.key;
+        if (!letter) return;
+
+        // 判定是否按住 Shift（或 Caps Lock 或虛擬 Shift）
+        const isShiftActive = e.shiftKey || isCaps || this.virtualShift;
+
+        this.processInput(letter, isShiftActive);
+      }
+
+      processInput(typedLetter, isShiftActive) {
         this.totalKeystrokes++;
 
-        // 實體按鍵視覺回饋
-        this.highlightPhysicalKey(typedKey.toLowerCase());
+        // 鍵盤按下視覺反饋
+        this.highlightPhysicalKey(typedLetter);
 
-        // 尋找最近且匹配的目標
-        let matchedTarget = null;
-        let isCaseMismatch = false;
-
-        // 依 y 軸排序，優先攻擊最靠近底部的目標
+        // 依 y 軸排序，優先攻擊最靠近下方的目標
         const sortedTargets = [...this.targets].sort((a, b) => b.y - a.y);
+        let matchedTarget = null;
 
         for (const t of sortedTargets) {
-          if (t.type === 'single') {
-            if (t.text === typedKey) {
-              matchedTarget = t;
-              break;
-            } else if (t.text.toLowerCase() === typedKey.toLowerCase()) {
-              // 字母正確但大小寫錯誤（例如忘了按 Shift）
-              isCaseMismatch = true;
-              matchedTarget = t;
-              break;
-            }
-          } else {
-            // 單字型目標
-            const expectedChar = t.text[t.charIdx];
-            if (expectedChar === typedKey) {
-              matchedTarget = t;
-              break;
-            } else if (expectedChar.toLowerCase() === typedKey.toLowerCase()) {
-              isCaseMismatch = true;
-              matchedTarget = t;
-              break;
-            }
+          if (t.text === typedLetter) {
+            matchedTarget = t;
+            break;
           }
         }
 
         if (matchedTarget) {
-          if (isCaseMismatch) {
-            // 大小寫不合：播放彈射音效、跳出警告，不扣血
-            const expected = (matchedTarget.type === 'single') ? matchedTarget.text : matchedTarget.text[matchedTarget.charIdx];
-            if (expected === expected.toUpperCase()) {
-              this.showToast(`⚠️ 目標是大寫【${expected}】！請按住 Shift 鍵充能發射！`);
-            } else {
-              this.showToast(`⚠️ 目標是小寫【${expected}】！請鬆開 Shift 鍵！`);
-            }
+          if (!isShiftActive) {
+            // 字母對了但未按 Shift：護盾彈開警示
+            this.showToast(`⚠️ 目標是大寫【${typedLetter}】！請按住 Shift 鍵充能發射！`);
             this.sound.playDeflect();
             this.createSparks(matchedTarget.x, matchedTarget.y, '#ff3838');
           } else {
@@ -937,36 +940,22 @@
             this.levelScore++;
             this.totalScore++;
 
-            const isUpper = (typedKey === typedKey.toUpperCase() && typedKey.toLowerCase() !== typedKey.toUpperCase());
-            this.sound.playLaser(isUpper);
+            this.sound.playLaser(true);
 
-            // 產生雷射光束
+            // 產生充能穿甲雷射
             this.lasers.push({
               startX: this.playerX,
-              startY: this.canvas.height - 50,
+              startY: this.canvas.height - 45,
               targetX: matchedTarget.x,
               targetY: matchedTarget.y,
               progress: 0,
-              isCharged: isUpper
+              isCharged: true
             });
 
-            if (matchedTarget.type === 'single') {
-              // 單一目標被擊毀
-              this.createExplosion(matchedTarget.x, matchedTarget.y, isUpper ? '#ff007f' : '#00f0ff');
-              this.targets = this.targets.filter(t => t !== matchedTarget);
-              this.sound.playExplosion();
-            } else {
-              // 單字目標擊中一字母
-              matchedTarget.charIdx++;
-              this.createSparks(matchedTarget.x, matchedTarget.y, isUpper ? '#ffe600' : '#00f0ff');
-
-              // 若單字全部字母皆打完，整艦爆炸
-              if (matchedTarget.charIdx >= matchedTarget.text.length) {
-                this.createExplosion(matchedTarget.x, matchedTarget.y, '#ffe600');
-                this.targets = this.targets.filter(t => t !== matchedTarget);
-                this.sound.playExplosion();
-              }
-            }
+            // 擊毀目標與爆炸特效
+            this.createExplosion(matchedTarget.x, matchedTarget.y, '#ff007f');
+            this.targets = this.targets.filter(t => t !== matchedTarget);
+            this.sound.playExplosion();
 
             this.updateHUD();
             this.updateKeyboardHint();
@@ -986,13 +975,13 @@
         clearTimeout(this.toastTimer);
         this.toastTimer = setTimeout(() => {
           el.classList.remove('show');
-        }, 1800);
+        }, 2000);
       }
 
       createExplosion(x, y, color) {
         for (let i = 0; i < 22; i++) {
           const angle = Math.random() * Math.PI * 2;
-          const speed = Math.random() * 4 + 1.5;
+          const speed = Math.random() * 3.5 + 1.2;
           this.particles.push({
             x: x,
             y: y,
@@ -1009,7 +998,7 @@
       createSparks(x, y, color) {
         for (let i = 0; i < 10; i++) {
           const angle = Math.random() * Math.PI * 2;
-          const speed = Math.random() * 2.5 + 1;
+          const speed = Math.random() * 2.2 + 1;
           this.particles.push({
             x: x,
             y: y,
@@ -1061,7 +1050,6 @@
       }
 
       updateHUD() {
-        document.getElementById('hud-level').innerText = `Lv.${this.currentLevelIdx + 1}`;
         document.getElementById('hud-level-score').innerText = `${this.levelScore} / 40`;
         document.getElementById('hud-total-score').innerText = `${this.totalScore} / 200`;
 
@@ -1075,7 +1063,7 @@
       }
 
       updateKeyboardHint() {
-        // 重置所有鍵盤高亮
+        // 重置鍵盤高亮
         document.querySelectorAll('.key').forEach(k => {
           k.classList.remove('active-target', 'active-shift');
         });
@@ -1087,56 +1075,44 @@
 
         // 取得最靠近底部的目標字母
         const lowestTarget = [...this.targets].sort((a, b) => b.y - a.y)[0];
-        let nextChar = "";
-        if (lowestTarget.type === 'single') {
-          nextChar = lowestTarget.text;
-        } else {
-          nextChar = lowestTarget.text[lowestTarget.charIdx];
-        }
-
-        const isUpper = (nextChar === nextChar.toUpperCase() && nextChar.toLowerCase() !== nextChar.toUpperCase());
-        const lowerChar = nextChar.toLowerCase();
+        const nextLetter = lowestTarget.text.toUpperCase();
 
         // 標記目標字母鍵
-        const targetKeyEl = document.querySelector(`.key[data-key="${lowerChar}"]`);
+        const targetKeyEl = document.querySelector(`.key[data-key="${nextLetter}"]`);
         if (targetKeyEl) {
           targetKeyEl.classList.add('active-target');
         }
 
-        // 若是大寫，依右手/左手對稱高亮對應的 Shift 鍵
-        if (isUpper) {
-          if (RIGHT_HAND_KEYS.has(lowerChar)) {
-            // 右手字母 -> 用左手按 Left Shift
-            document.getElementById('key-shift-left').classList.add('active-shift');
-            document.getElementById('kb-hint').innerHTML = `💡 目標大寫【<strong>${nextChar}</strong>】：右手打字母，<strong>左手按住 [Left Shift]</strong> 充能！`;
-          } else {
-            // 左手字母 -> 用右手按 Right Shift
-            document.getElementById('key-shift-right').classList.add('active-shift');
-            document.getElementById('kb-hint').innerHTML = `💡 目標大寫【<strong>${nextChar}</strong>】：左手打字母，<strong>右手按住 [Right Shift]</strong> 充能！`;
-          }
+        // 依左右手對稱高亮對應的 Shift 鍵
+        if (RIGHT_HAND_KEYS.has(nextLetter)) {
+          // 右手字母 -> 左手按 Left Shift
+          document.getElementById('key-shift-left').classList.add('active-shift');
+          document.getElementById('kb-hint').innerHTML = `💡 目標大寫【<strong>${nextLetter}</strong>】：右手打鍵位，<strong>左手按住 [Left Shift]</strong> 充能！`;
         } else {
-          document.getElementById('kb-hint').innerHTML = `💡 目標小寫【<strong>${nextChar}</strong>】：直接輕按字母鍵擊發！`;
+          // 左手字母 -> 右手按 Right Shift
+          document.getElementById('key-shift-right').classList.add('active-shift');
+          document.getElementById('kb-hint').innerHTML = `💡 目標大寫【<strong>${nextLetter}</strong>】：左手打鍵位，<strong>右手按住 [Right Shift]</strong> 充能！`;
         }
       }
 
-      highlightPhysicalKey(char) {
-        const keyEl = document.querySelector(`.key[data-key="${char}"]`);
+      highlightPhysicalKey(letter) {
+        const keyEl = document.querySelector(`.key[data-key="${letter}"]`);
         if (keyEl) {
           keyEl.classList.add('pressed');
-          setTimeout(() => keyEl.classList.remove('pressed'), 120);
+          setTimeout(() => keyEl.classList.remove('pressed'), 140);
         }
       }
 
-      /* ================= 遊戲循環 (Loop) ================= */
+      /* ================= 遊戲主循環 (Loop) ================= */
       loop() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // 繪製背景星空
+        // 背景星空
         this.renderStars();
 
         if (this.isPlaying && !this.isPaused) {
-          // 目標生成管理：畫面上維持 2~3 個目標
-          if (this.targets.length < 3 && Math.random() < 0.025) {
+          // 維持畫面上 2~3 個慢速飄落的大寫目標
+          if (this.targets.length < 3 && Math.random() < 0.03) {
             this.spawnTarget();
           }
 
@@ -1144,7 +1120,7 @@
           this.updateTargets();
         }
 
-        // 繪製所有實體
+        // 繪製各實體
         this.renderTargets();
         this.renderLasers();
         this.renderParticles();
@@ -1173,13 +1149,13 @@
         for (let i = this.targets.length - 1; i >= 0; i--) {
           const t = this.targets[i];
           t.y += t.speed;
-          if (t.shieldAngle !== undefined) t.shieldAngle += 0.04;
+          t.shieldAngle += 0.025;
 
           // 撞擊底線防護罩
-          if (t.y > this.canvas.height - 70) {
+          if (t.y > this.canvas.height - 65) {
             this.shield -= 15;
             this.sound.playHitBase();
-            this.createExplosion(t.x, this.canvas.height - 60, '#ff3838');
+            this.createExplosion(t.x, this.canvas.height - 55, '#ff3838');
             this.targets.splice(i, 1);
             this.updateHUD();
             this.updateKeyboardHint();
@@ -1194,129 +1170,42 @@
 
       renderTargets() {
         for (const t of this.targets) {
-          if (t.type === 'single') {
-            // 單一目標 (Level 1, 2, 3)
-            this.ctx.save();
-            this.ctx.translate(t.x, t.y);
+          this.ctx.save();
+          this.ctx.translate(t.x, t.y);
 
-            if (t.isUpper) {
-              // 大寫裝甲機：帶金色/紫粉旋轉光環護盾
-              this.ctx.save();
-              this.ctx.rotate(t.shieldAngle);
-              this.ctx.strokeStyle = '#ff007f';
-              this.ctx.lineWidth = 2.5;
-              this.ctx.setLineDash([8, 6]);
-              this.ctx.beginPath();
-              this.ctx.arc(0, 0, 32, 0, Math.PI * 2);
-              this.ctx.stroke();
-              this.ctx.restore();
+          // 旋轉高能粉紅/金光能量護盾 (提示需按 Shift 擊破)
+          this.ctx.save();
+          this.ctx.rotate(t.shieldAngle);
+          this.ctx.strokeStyle = '#ff007f';
+          this.ctx.lineWidth = 2.5;
+          this.ctx.setLineDash([8, 6]);
+          this.ctx.beginPath();
+          this.ctx.arc(0, 0, 32, 0, Math.PI * 2);
+          this.ctx.stroke();
+          this.ctx.restore();
 
-              // 機體
-              this.ctx.fillStyle = '#261338';
-              this.ctx.strokeStyle = '#ff007f';
-              this.ctx.lineWidth = 2;
-              this.ctx.beginPath();
-              this.ctx.moveTo(0, 20);
-              this.ctx.lineTo(24, -12);
-              this.ctx.lineTo(-24, -12);
-              this.ctx.closePath();
-              this.ctx.fill();
-              this.ctx.stroke();
+          // 敵機重裝甲本體
+          this.ctx.fillStyle = '#261338';
+          this.ctx.strokeStyle = '#ff007f';
+          this.ctx.lineWidth = 2;
+          this.ctx.beginPath();
+          this.ctx.moveTo(0, 20);
+          this.ctx.lineTo(24, -12);
+          this.ctx.lineTo(-24, -12);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.stroke();
 
-              // 大寫字母
-              this.ctx.fillStyle = '#ffe600';
-              this.ctx.font = 'bold 24px "Courier New", monospace';
-              this.ctx.textAlign = 'center';
-              this.ctx.textBaseline = 'middle';
-              this.ctx.shadowColor = '#ffe600';
-              this.ctx.shadowBlur = 10;
-              this.ctx.fillText(t.text, 0, 0);
+          // 大寫字母 (粗體高亮金色，帶文字發光陰影)
+          this.ctx.fillStyle = '#ffe600';
+          this.ctx.font = 'bold 24px "Courier New", monospace';
+          this.ctx.textAlign = 'center';
+          this.ctx.textBaseline = 'middle';
+          this.ctx.shadowColor = '#ffe600';
+          this.ctx.shadowBlur = 10;
+          this.ctx.fillText(t.text, 0, 0);
 
-            } else {
-              // 小寫隕石：多面體多邊形
-              this.ctx.fillStyle = '#17223b';
-              this.ctx.strokeStyle = '#00f0ff';
-              this.ctx.lineWidth = 2;
-              this.ctx.beginPath();
-              this.ctx.moveTo(0, -26);
-              this.ctx.lineTo(22, -12);
-              this.ctx.lineTo(20, 18);
-              this.ctx.lineTo(-6, 26);
-              this.ctx.lineTo(-24, 10);
-              this.ctx.lineTo(-18, -16);
-              this.ctx.closePath();
-              this.ctx.fill();
-              this.ctx.stroke();
-
-              // 小寫字母
-              this.ctx.fillStyle = '#ffffff';
-              this.ctx.font = 'bold 24px "Courier New", monospace';
-              this.ctx.textAlign = 'center';
-              this.ctx.textBaseline = 'middle';
-              this.ctx.shadowColor = '#00f0ff';
-              this.ctx.shadowBlur = 8;
-              this.ctx.fillText(t.text, 0, 0);
-            }
-
-            this.ctx.restore();
-
-          } else {
-            // 單字信標巡航艦 (Level 4, 5)
-            this.ctx.save();
-            this.ctx.translate(t.x, t.y);
-
-            // 艦身本體
-            this.ctx.fillStyle = '#10172d';
-            this.ctx.strokeStyle = '#00f0ff';
-            this.ctx.lineWidth = 2;
-            const w = t.width;
-            const h = t.height;
-            this.ctx.beginPath();
-            this.ctx.roundRect(-w / 2, -h / 2, w, h, 8);
-            this.ctx.fill();
-            this.ctx.stroke();
-
-            // 繪製單字內各字母卡槽
-            const charW = 22;
-            const startX = -((t.text.length * charW) / 2) + charW / 2;
-
-            for (let i = 0; i < t.text.length; i++) {
-              const char = t.text[i];
-              const cx = startX + i * charW;
-              const isCurrent = (i === t.charIdx);
-              const isDone = (i < t.charIdx);
-              const isUpper = (char === char.toUpperCase() && char.toLowerCase() !== char.toUpperCase());
-
-              this.ctx.font = 'bold 20px "Courier New", monospace';
-              this.ctx.textAlign = 'center';
-              this.ctx.textBaseline = 'middle';
-
-              if (isDone) {
-                // 已擊中：暗淡淡綠
-                this.ctx.fillStyle = '#39ff14';
-                this.ctx.shadowBlur = 0;
-                this.ctx.fillText(char, cx, 0);
-              } else if (isCurrent) {
-                // 當前待擊中：高亮框與呼吸光
-                this.ctx.fillStyle = isUpper ? '#ffe600' : '#00f0ff';
-                this.ctx.shadowColor = isUpper ? '#ffe600' : '#00f0ff';
-                this.ctx.shadowBlur = 12;
-                this.ctx.fillText(char, cx, 0);
-
-                // 外圍高亮提示框
-                this.ctx.strokeStyle = isUpper ? '#ffe600' : '#00f0ff';
-                this.ctx.lineWidth = 1.8;
-                this.ctx.strokeRect(cx - 10, -14, 20, 28);
-              } else {
-                // 尚未擊中：灰白色
-                this.ctx.fillStyle = '#64748b';
-                this.ctx.shadowBlur = 0;
-                this.ctx.fillText(char, cx, 0);
-              }
-            }
-
-            this.ctx.restore();
-          }
+          this.ctx.restore();
         }
       }
 
@@ -1326,10 +1215,10 @@
           l.progress += 0.22;
 
           this.ctx.save();
-          this.ctx.strokeStyle = l.isCharged ? '#ff007f' : '#00f0ff';
-          this.ctx.lineWidth = l.isCharged ? 4 : 2.5;
-          this.ctx.shadowColor = l.isCharged ? '#ff007f' : '#00f0ff';
-          this.ctx.shadowBlur = 12;
+          this.ctx.strokeStyle = '#ff007f';
+          this.ctx.lineWidth = 4;
+          this.ctx.shadowColor = '#ff007f';
+          this.ctx.shadowBlur = 14;
 
           this.ctx.beginPath();
           this.ctx.moveTo(l.startX, l.startY);
