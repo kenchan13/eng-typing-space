@@ -7,12 +7,14 @@
   <style>
     :root {
       --bg-dark: #070913;
-      --panel-bg: rgba(13, 17, 34, 0.92);
+      --panel-bg: rgba(13, 17, 34, 0.94);
       --neon-cyan: #00f0ff;
       --neon-pink: #ff007f;
       --neon-gold: #ffe600;
       --neon-green: #39ff14;
       --neon-red: #ff3838;
+      --neon-orange: #ff7700;
+      --neon-purple: #c084fc;
       --text-main: #f0f6fc;
       --text-dim: #94a3b8;
     }
@@ -43,11 +45,11 @@
       width: 100%;
       max-width: 1100px;
       height: 96vh;
-      max-height: 840px;
-      background: radial-gradient(circle at 50% 20%, #171133 0%, #060812 80%);
+      max-height: 850px;
+      background: #060812;
       border: 2px solid #232c4d;
       border-radius: 14px;
-      box-shadow: 0 0 35px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(0, 0, 0, 0.8);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -77,7 +79,7 @@
     }
 
     .hud-label {
-      font-size: 0.70rem;
+      font-size: 0.68rem;
       color: var(--text-dim);
       letter-spacing: 1px;
       text-transform: uppercase;
@@ -96,9 +98,15 @@
       text-shadow: 0 0 8px rgba(255, 230, 0, 0.5);
     }
 
+    .hud-value.timer {
+      color: var(--neon-gold);
+      text-shadow: 0 0 10px rgba(255, 230, 0, 0.6);
+      font-size: 1.35rem;
+    }
+
     /* 護盾血條 */
     .shield-container {
-      width: 130px;
+      width: 120px;
       height: 12px;
       background: #1e293b;
       border-radius: 6px;
@@ -122,7 +130,7 @@
       padding: 6px 12px;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: bold;
       transition: all 0.2s;
       display: flex;
@@ -143,7 +151,7 @@
       padding: 5px 8px;
       border-radius: 6px;
       font-weight: bold;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       outline: none;
       cursor: pointer;
     }
@@ -295,9 +303,9 @@
       border: 2px solid var(--neon-cyan);
       box-shadow: 0 0 40px rgba(0, 240, 255, 0.25);
       border-radius: 16px;
-      padding: 32px 36px;
+      padding: 30px 34px;
       width: 90%;
-      max-width: 520px;
+      max-width: 530px;
       text-align: center;
       animation: pop-in 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
     }
@@ -308,17 +316,17 @@
     }
 
     .modal-title {
-      font-size: 1.8rem;
+      font-size: 1.75rem;
       color: var(--neon-cyan);
       margin-bottom: 12px;
       text-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
     }
 
     .modal-desc {
-      font-size: 1rem;
+      font-size: 0.96rem;
       color: #cbd5e1;
       line-height: 1.6;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
 
     .modal-stats {
@@ -375,20 +383,24 @@
         <div class="hud-item">
           <span class="hud-label">目前關卡 (Level)</span>
           <select id="level-select" class="level-select">
-            <option value="0">Lv.1: 基準鍵 (極超慢速)</option>
-            <option value="1">Lv.2: 上排鍵 (極慢速)</option>
-            <option value="2">Lv.3: 下排鍵 (慢速)</option>
-            <option value="3">Lv.4: 雙手綜合 (平穩慢速)</option>
-            <option value="4">Lv.5: 終極艦隊 (全鍵盤挑戰)</option>
+            <option value="0">Lv.1: 地球軌道 (減半僅1機 • 1分)</option>
+            <option value="1">Lv.2: 火星帶 (最多2機 • 1分)</option>
+            <option value="2">Lv.3: 紫晶星雲 (最多2機 • 1分)</option>
+            <option value="3">Lv.4: 雙子星系 (最多3機 • 1分)</option>
+            <option value="4">Lv.5: 超空間大決戰 (母艦 • 1分)</option>
           </select>
         </div>
         <div class="hud-item">
-          <span class="hud-label">本關進度 (40 擊滿分)</span>
-          <span id="hud-level-score" class="hud-value gold">0 / 40</span>
+          <span class="hud-label">倒數時間 (Time)</span>
+          <span id="hud-timer" class="hud-value timer">60s</span>
         </div>
         <div class="hud-item">
-          <span class="hud-label">總得分 (Total)</span>
-          <span id="hud-total-score" class="hud-value">0 / 200</span>
+          <span class="hud-label">本關擊落 (Score)</span>
+          <span id="hud-level-score" class="hud-value gold">0 架</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">總擊落數 (Total)</span>
+          <span id="hud-total-score" class="hud-value">0 架</span>
         </div>
       </div>
 
@@ -461,12 +473,11 @@
       <div class="modal-card">
         <h2 class="modal-title">🚀 星際巡邏隊：大寫字母防衛戰</h2>
         <p class="modal-desc">
-          指揮官！全 5 關全面採用<strong>【單一大寫字母】</strong>慢速訓練！<br>
-          下落速度已<strong>全面大幅減速</strong>，讓您有充裕時間精準練習。<br><br>
-          • <strong>目標全為大寫字母</strong>：請練習【按住 Shift 鍵】擊發！<br>
-          • <strong>每擊破 1 架裝甲機 = 得 1 分</strong><br>
-          • <strong>每關目標：累積 40 擊（滿分 40 分）</strong><br>
-          • 亦可直接點擊下方虛擬鍵盤按鈕進行操作！
+          指揮官！星際防衛任務已全面升級為<strong>【1 分鐘限時挑戰】</strong>！<br><br>
+          • <strong>每關倒數 60 秒</strong>：守住基地防護罩堅持 1 分鐘即可通關！<br>
+          • <strong>第 1 關敵機數量減半</strong>：畫面上<strong>永遠僅有 1 架敵機</strong>，超慢速飄落，從容練習無壓力！<br>
+          • <strong>專屬宇宙背景</strong>：每關擁有獨特星雲、行星與超空間躍遷特效！<br>
+          • <strong>目標全為大寫字母</strong>：按住 <strong>Shift 鍵</strong> 充能射擊！
         </p>
         <button id="btn-start-game" class="btn-action">立即出擊 START</button>
       </div>
@@ -475,12 +486,12 @@
     <!-- 彈窗：關卡過關結算 (Level Clear) -->
     <div id="modal-clear" class="modal-overlay">
       <div class="modal-card">
-        <h2 class="modal-title" style="color: var(--neon-gold);">🎉 關卡防衛成功！</h2>
+        <h2 class="modal-title" style="color: var(--neon-gold);">🎉 60 秒防衛成功！</h2>
         <p id="clear-level-text" class="modal-desc">第 1 關已順利完成！</p>
         <div class="modal-stats">
           <div class="stat-row">
-            <span class="stat-label">關卡得分</span>
-            <span id="stat-level-score" class="stat-val">40 / 40</span>
+            <span class="stat-label">本關擊落敵機</span>
+            <span id="stat-level-score" class="stat-val">18 架</span>
           </div>
           <div class="stat-row">
             <span class="stat-label">打字準確率</span>
@@ -488,11 +499,11 @@
           </div>
           <div class="stat-row">
             <span class="stat-label">打字速度 (WPM)</span>
-            <span id="stat-wpm" class="stat-val">32 WPM</span>
+            <span id="stat-wpm" class="stat-val">28 WPM</span>
           </div>
           <div class="stat-row">
-            <span class="stat-label">累計總分</span>
-            <span id="stat-cum-score" class="stat-val">40 / 200</span>
+            <span class="stat-label">累計總擊落</span>
+            <span id="stat-cum-score" class="stat-val">18 架</span>
           </div>
         </div>
         <button id="btn-next-level" class="btn-action">進入下一關 NEXT</button>
@@ -503,7 +514,7 @@
     <div id="modal-over" class="modal-overlay">
       <div class="modal-card" style="border-color: var(--neon-red);">
         <h2 class="modal-title" style="color: var(--neon-red);">💥 基地防護罩破裂！</h2>
-        <p class="modal-desc">請不用緊張，調整手指姿勢，按住 Shift 鍵再試一次！</p>
+        <p class="modal-desc">敵機衝撞防護罩過多！放鬆心情，調整手指姿勢再次嘗試挑戰 60 秒！</p>
         <button id="btn-retry-level" class="btn-action" style="background: linear-gradient(90deg, #ff3838, #ff7700);">重新挑戰本關</button>
       </div>
     </div>
@@ -512,11 +523,11 @@
     <div id="modal-victory" class="modal-overlay">
       <div class="modal-card" style="border-color: var(--neon-gold);">
         <h2 class="modal-title" style="color: var(--neon-gold);">🏆 地球防衛總司令！全通關</h2>
-        <p class="modal-desc">太棒了！您已順利完成全部 5 大關卡的大寫字母打字訓練！</p>
+        <p class="modal-desc">恭喜指揮官！成功守衛全部 5 大星系關卡，完成了每關 1 分鐘的長征！</p>
         <div class="modal-stats">
           <div class="stat-row">
-            <span class="stat-label">最終總得分</span>
-            <span id="stat-final-score" class="stat-val">200 / 200</span>
+            <span class="stat-label">最終總擊落數</span>
+            <span id="stat-final-score" class="stat-val">95 架</span>
           </div>
           <div class="stat-row">
             <span class="stat-label">軍銜評定</span>
@@ -527,8 +538,8 @@
             <span id="stat-final-acc" class="stat-val">96%</span>
           </div>
           <div class="stat-row">
-            <span class="stat-label">總擊發次數</span>
-            <span id="stat-final-shots" class="stat-val">200 發</span>
+            <span class="stat-label">戰役總時長</span>
+            <span id="stat-final-shots" class="stat-val">5 分鐘完成</span>
           </div>
         </div>
         <button id="btn-play-again" class="btn-action">再次挑戰 REPLAY</button>
@@ -557,13 +568,12 @@
         }
       }
 
-      playLaser(isCharged) {
+      playLaser() {
         if (!this.enabled || !this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
 
-        // 大寫充能雷射：鋸齒波高頻推進
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(450, now);
         osc.frequency.exponentialRampToValueAtTime(1350, now + 0.16);
@@ -652,52 +662,62 @@
     }
 
     /* =====================================================================
-       2. 關卡設定 (全部 5 關皆為單一大寫字母，速度大幅減慢，40 擊 / 滿分 40 分)
+       2. 關卡與宇宙背景設定 (每關 60 秒限時，單一大寫字母，第 1 關敵機減半至僅 1 架)
        ===================================================================== */
     const LEVEL_CONFIGS = [
       {
         level: 1,
-        title: "Level 1: 星際啟航 (基準鍵 A~L • 極超慢速)",
-        desc: "【單一大寫字母】超慢速飄落！專注練習【按住 Shift 鍵】擊發！",
+        title: "Level 1: 地球近地軌道 (極超慢速 • 基準鍵 A~L)",
+        desc: "【單一大寫字母】每次僅出現 1 架敵機！按住 Shift 鍵充能發射！",
+        theme: "earth",
         pool: "ASDFJKLGH".split(''),
-        targetScore: 40,
-        speed: 0.18 // 原版 0.65，大幅調慢到 0.18，給初學者充足反應時間！
+        speed: 0.18,
+        maxTargets: 1,         // 第 1 關減半：畫面上永遠只有 1 架敵機，零壓力！
+        duration: 60
       },
       {
         level: 2,
-        title: "Level 2: 巡航推進 (上排鍵 Q~P 擴展 • 極慢速)",
-        desc: "【單一大寫字母】加入 Q, W, E, R, T... 雙手配合按住 Shift！",
+        title: "Level 2: 火星小行星帶 (極慢速 • 上排鍵 Q~P)",
+        desc: "【單一大寫字母】火星空域！最多 2 架敵機，雙手配合按住 Shift！",
+        theme: "mars",
         pool: "QWERTYUIOPASDFGHJKL".split(''),
-        targetScore: 40,
-        speed: 0.22
+        speed: 0.22,
+        maxTargets: 2,         // 第 2 關適度放寬至最多 2 架
+        duration: 60
       },
       {
         level: 3,
-        title: "Level 3: 星雲穿越 (下排鍵 Z~M 擴展 • 慢速)",
-        desc: "【單一大寫字母】加入 Z, X, C, V, B, N, M，熟練全身鍵位！",
+        title: "Level 3: 紫晶電磁星雲 (慢速 • 下排鍵 Z~M)",
+        desc: "【單一大寫字母】紫晶星雲！最多 2 架敵機，熟練下排手指伸展！",
+        theme: "nebula",
         pool: "ZXCVBNMASDFGHJKL".split(''),
-        targetScore: 40,
-        speed: 0.26
+        speed: 0.26,
+        maxTargets: 2,
+        duration: 60
       },
       {
         level: 4,
-        title: "Level 4: 雙子星系 (全鍵盤隨機 A~Z • 平穩慢速)",
-        desc: "【單一大寫字母】26 個大寫字母隨機出現！掌握雙手交叉 Shift！",
+        title: "Level 4: 雙子星耀金星系 (平穩慢速 • 全鍵盤隨機)",
+        desc: "【單一大寫字母】雙子星系！最多 3 架敵機，全鍵盤交叉 Shift 練習！",
+        theme: "twin_sun",
         pool: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''),
-        targetScore: 40,
-        speed: 0.30
+        speed: 0.30,
+        maxTargets: 3,
+        duration: 60
       },
       {
         level: 5,
-        title: "Level 5: 終極艦隊 (全方位星際大決戰 • 挑戰)",
-        desc: "【單一大寫字母】全字母總考驗！挑戰 40 發全中，成為星際特級上校！",
+        title: "Level 5: 超空間大決戰 (全方位星際大決戰 • 母艦決戰)",
+        desc: "【單一大寫字母】超空間躍遷！最多 4 架敵機，爭奪星際特級上校軍銜！",
+        theme: "warp",
         pool: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''),
-        targetScore: 40,
-        speed: 0.35
+        speed: 0.35,
+        maxTargets: 4,
+        duration: 60
       }
     ];
 
-    // 鍵盤左右手分工表 (對稱 Shift 導引)
+    // 左右手對稱指法導引表
     const LEFT_HAND_KEYS = new Set(['Q','W','E','R','T','A','S','D','F','G','Z','X','C','V','B']);
     const RIGHT_HAND_KEYS = new Set(['Y','U','I','O','P','H','J','K','L','N','M']);
 
@@ -712,24 +732,30 @@
 
         // 狀態變數
         this.currentLevelIdx = 0;
-        this.levelScore = 0;      // 0 ~ 40
-        this.totalScore = 0;      // 0 ~ 200
-        this.shield = 100;        // 0 ~ 100
+        this.levelScore = 0;      // 本關擊落數
+        this.totalScore = 0;      // 累計擊落數
+        this.shield = 100;        // 護盾 0 ~ 100
         this.isPaused = false;
         this.isPlaying = false;
-        this.virtualShift = false; // 支援觸控 / 點擊虛擬鍵盤 Shift
+        this.virtualShift = false;
+
+        // 時間變數 (每關 60 秒)
+        this.levelDuration = 60;
+        this.timeLeft = 60;
+        this.levelStartTime = 0;
 
         // 統計變數
         this.totalKeystrokes = 0;
         this.correctKeystrokes = 0;
-        this.levelStartTime = 0;
 
         // 畫面實體
         this.stars = [];
+        this.spaceRocks = [];      // 背景飄浮隕石 (火星關卡)
         this.targets = [];
         this.lasers = [];
         this.particles = [];
         this.playerX = 0;
+        this.bgTime = 0;           // 動態背景波紋計時器
 
         this.initCanvasSize();
         this.initStars();
@@ -747,14 +773,28 @@
 
       initStars() {
         this.stars = [];
-        const count = 90;
+        const count = 100;
         for (let i = 0; i < count; i++) {
           this.stars.push({
             x: Math.random() * this.canvas.width,
             y: Math.random() * this.canvas.height,
-            size: Math.random() * 2 + 0.5,
-            speed: Math.random() * 0.6 + 0.2,
-            alpha: Math.random() * 0.7 + 0.3
+            size: Math.random() * 2 + 0.6,
+            speed: Math.random() * 0.7 + 0.3,
+            alpha: Math.random() * 0.7 + 0.3,
+            colorRatio: Math.random()
+          });
+        }
+
+        // 初始化背景漂浮碎石 (供 Level 2 火星關卡使用)
+        this.spaceRocks = [];
+        for (let i = 0; i < 7; i++) {
+          this.spaceRocks.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            size: Math.random() * 12 + 6,
+            speed: Math.random() * 0.15 + 0.05,
+            angle: Math.random() * Math.PI * 2,
+            rotSpeed: (Math.random() - 0.5) * 0.015
           });
         }
       }
@@ -770,7 +810,6 @@
           keyEl.addEventListener('click', () => {
             if (!this.isPlaying || this.isPaused) return;
             const letter = keyEl.getAttribute('data-key').toUpperCase();
-            // 點擊虛擬按鍵時，預設自動視為包含 Shift 充能擊發
             this.processInput(letter, true);
           });
         });
@@ -841,6 +880,8 @@
 
       startLevel(idx) {
         this.currentLevelIdx = idx;
+        const cfg = LEVEL_CONFIGS[this.currentLevelIdx];
+
         this.levelScore = 0;
         this.shield = 100;
         this.targets = [];
@@ -849,11 +890,18 @@
         this.virtualShift = false;
         this.isPaused = false;
         this.isPlaying = true;
+
+        this.levelDuration = cfg.duration;
+        this.timeLeft = cfg.duration;
         this.levelStartTime = Date.now();
 
-        // 立即生成 2 個初始目標（垂直錯開），進入關卡後畫面不空白，學生立刻能打！
-        this.spawnTarget(75);
-        this.spawnTarget(20);
+        // 立即生成初始目標：第 1 關只生成 1 架！其他關卡生成 2 架錯開
+        if (cfg.maxTargets === 1) {
+          this.spawnTarget(60);
+        } else {
+          this.spawnTarget(70);
+          this.spawnTarget(20);
+        }
 
         // 同步選單
         document.getElementById('level-select').value = idx;
@@ -864,10 +912,9 @@
 
       spawnTarget(customY) {
         const cfg = LEVEL_CONFIGS[this.currentLevelIdx];
-        if (this.levelScore >= cfg.targetScore) return;
 
-        // 檢查畫面上待擊破數是否已補滿本關 40 擊
-        if (this.levelScore + this.targets.length >= cfg.targetScore) return;
+        // 遵守各關卡的最大同時存在上限（第 1 關上限僅為 1 架！）
+        if (this.targets.length >= cfg.maxTargets) return;
 
         const margin = 80;
         const x = margin + Math.random() * (this.canvas.width - margin * 2);
@@ -880,7 +927,7 @@
           text: char,
           x: x,
           y: y,
-          speed: cfg.speed + Math.random() * 0.05, // 保持極度緩慢
+          speed: cfg.speed + Math.random() * 0.04,
           radius: 30,
           shieldAngle: Math.random() * Math.PI
         });
@@ -892,10 +939,10 @@
         // 檢查 Caps Lock 狀態
         const isCaps = !!(e.getModifierState && e.getModifierState('CapsLock'));
         if (isCaps) {
-          this.showToast("💡 提示：Caps Lock 開啟中，亦可直接配合擊發大寫！");
+          this.showToast("💡 提示：Caps Lock 開啟中，亦可直接擊發大寫！");
         }
 
-        // 解析按下的英文字母：優先使用 e.code (如 "KeyA" -> "A")，完全免疫中文輸入法干擾！
+        // 解析按鍵：優先使用 e.code (如 "KeyA" -> "A")，完全免疫任何中文輸入法！
         let letter = null;
         if (e.code && e.code.startsWith('Key')) {
           letter = e.code.slice(3).toUpperCase();
@@ -917,7 +964,7 @@
         // 鍵盤按下視覺反饋
         this.highlightPhysicalKey(typedLetter);
 
-        // 依 y 軸排序，優先攻擊最靠近下方的目標
+        // 優先攻擊最靠近下方的目標
         const sortedTargets = [...this.targets].sort((a, b) => b.y - a.y);
         let matchedTarget = null;
 
@@ -930,7 +977,7 @@
 
         if (matchedTarget) {
           if (!isShiftActive) {
-            // 字母對了但未按 Shift：護盾彈開警示
+            // 字母正確但未按 Shift：護盾彈開
             this.showToast(`⚠️ 目標是大寫【${typedLetter}】！請按住 Shift 鍵充能發射！`);
             this.sound.playDeflect();
             this.createSparks(matchedTarget.x, matchedTarget.y, '#ff3838');
@@ -940,7 +987,7 @@
             this.levelScore++;
             this.totalScore++;
 
-            this.sound.playLaser(true);
+            this.sound.playLaser();
 
             // 產生充能穿甲雷射
             this.lasers.push({
@@ -948,8 +995,7 @@
               startY: this.canvas.height - 45,
               targetX: matchedTarget.x,
               targetY: matchedTarget.y,
-              progress: 0,
-              isCharged: true
+              progress: 0
             });
 
             // 擊毀目標與爆炸特效
@@ -960,9 +1006,9 @@
             this.updateHUD();
             this.updateKeyboardHint();
 
-            // 檢查是否達成 40 分通關
-            if (this.levelScore >= LEVEL_CONFIGS[this.currentLevelIdx].targetScore) {
-              this.handleLevelClear();
+            // 若目前目標清空，立即補給新敵機，避免長時間等待
+            if (this.targets.length === 0) {
+              this.spawnTarget(-20);
             }
           }
         }
@@ -975,7 +1021,7 @@
         clearTimeout(this.toastTimer);
         this.toastTimer = setTimeout(() => {
           el.classList.remove('show');
-        }, 2000);
+        }, 1800);
       }
 
       createExplosion(x, y, color) {
@@ -1016,15 +1062,15 @@
         this.isPlaying = false;
         this.sound.playFanfare();
 
-        const durationMinutes = (Date.now() - this.levelStartTime) / 60000;
+        const durationMinutes = (this.levelDuration) / 60;
         const wpm = Math.round((this.correctKeystrokes / 5) / (durationMinutes || 0.1)) || 0;
         const accuracy = Math.round((this.correctKeystrokes / (this.totalKeystrokes || 1)) * 100);
 
-        document.getElementById('clear-level-text').innerText = `恭喜防衛成功！${LEVEL_CONFIGS[this.currentLevelIdx].title}`;
-        document.getElementById('stat-level-score').innerText = `${this.levelScore} / 40`;
+        document.getElementById('clear-level-text').innerText = `恭喜防守滿 60 秒！${LEVEL_CONFIGS[this.currentLevelIdx].title}`;
+        document.getElementById('stat-level-score').innerText = `${this.levelScore} 架`;
         document.getElementById('stat-accuracy').innerText = `${accuracy}%`;
         document.getElementById('stat-wpm').innerText = `${wpm} WPM`;
-        document.getElementById('stat-cum-score').innerText = `${this.totalScore} / 200`;
+        document.getElementById('stat-cum-score').innerText = `${this.totalScore} 架`;
 
         document.getElementById('modal-clear').classList.add('active');
       }
@@ -1038,20 +1084,29 @@
         this.isPlaying = false;
         const accuracy = Math.round((this.correctKeystrokes / (this.totalKeystrokes || 1)) * 100);
         let rank = "星際巡防兵 ⭐";
-        if (this.totalScore >= 190 && accuracy >= 90) rank = "星際特級上校 ⭐⭐⭐";
-        else if (this.totalScore >= 160) rank = "星際精英領航長 ⭐⭐";
+        if (this.totalScore >= 80 && accuracy >= 90) rank = "星際特級上校 ⭐⭐⭐";
+        else if (this.totalScore >= 50) rank = "星際精英領航長 ⭐⭐";
 
-        document.getElementById('stat-final-score').innerText = `${this.totalScore} / 200`;
+        document.getElementById('stat-final-score').innerText = `${this.totalScore} 架敵機`;
         document.getElementById('stat-final-rank').innerText = rank;
         document.getElementById('stat-final-acc').innerText = `${accuracy}%`;
-        document.getElementById('stat-final-shots').innerText = `${this.totalScore} 發全部命中`;
+        document.getElementById('stat-final-shots').innerText = `全部 5 關順利完成`;
 
         document.getElementById('modal-victory').classList.add('active');
       }
 
       updateHUD() {
-        document.getElementById('hud-level-score').innerText = `${this.levelScore} / 40`;
-        document.getElementById('hud-total-score').innerText = `${this.totalScore} / 200`;
+        // 倒數計時顯示
+        const timerEl = document.getElementById('hud-timer');
+        timerEl.innerText = `${this.timeLeft}s`;
+        if (this.timeLeft <= 10) {
+          timerEl.style.color = '#ff3838';
+        } else {
+          timerEl.style.color = 'var(--neon-gold)';
+        }
+
+        document.getElementById('hud-level-score').innerText = `${this.levelScore} 架`;
+        document.getElementById('hud-total-score').innerText = `${this.totalScore} 架`;
 
         const shieldBar = document.getElementById('hud-shield');
         shieldBar.style.width = `${Math.max(0, this.shield)}%`;
@@ -1063,7 +1118,6 @@
       }
 
       updateKeyboardHint() {
-        // 重置鍵盤高亮
         document.querySelectorAll('.key').forEach(k => {
           k.classList.remove('active-target', 'active-shift');
         });
@@ -1077,7 +1131,6 @@
         const lowestTarget = [...this.targets].sort((a, b) => b.y - a.y)[0];
         const nextLetter = lowestTarget.text.toUpperCase();
 
-        // 標記目標字母鍵
         const targetKeyEl = document.querySelector(`.key[data-key="${nextLetter}"]`);
         if (targetKeyEl) {
           targetKeyEl.classList.add('active-target');
@@ -1085,11 +1138,9 @@
 
         // 依左右手對稱高亮對應的 Shift 鍵
         if (RIGHT_HAND_KEYS.has(nextLetter)) {
-          // 右手字母 -> 左手按 Left Shift
           document.getElementById('key-shift-left').classList.add('active-shift');
           document.getElementById('kb-hint').innerHTML = `💡 目標大寫【<strong>${nextLetter}</strong>】：右手打鍵位，<strong>左手按住 [Left Shift]</strong> 充能！`;
         } else {
-          // 左手字母 -> 右手按 Right Shift
           document.getElementById('key-shift-right').classList.add('active-shift');
           document.getElementById('kb-hint').innerHTML = `💡 目標大寫【<strong>${nextLetter}</strong>】：左手打鍵位，<strong>右手按住 [Right Shift]</strong> 充能！`;
         }
@@ -1103,16 +1154,251 @@
         }
       }
 
+      /* =====================================================================
+         4. 各關卡專屬宇宙背景繪製 (Level Backgrounds)
+         ===================================================================== */
+      renderLevelBackground() {
+        const w = this.canvas.width;
+        const h = this.canvas.height;
+        const cfg = LEVEL_CONFIGS[this.currentLevelIdx];
+        this.bgTime += 0.015;
+
+        switch (cfg.theme) {
+          case 'earth': {
+            // Level 1: 地球近地軌道 (深藍漸層 + 底部地球大氣層弧線)
+            const bgGrad = this.ctx.createRadialGradient(w * 0.5, h * 0.3, 50, w * 0.5, h * 0.5, w);
+            bgGrad.addColorStop(0, '#0c1b33');
+            bgGrad.addColorStop(0.6, '#060d1f');
+            bgGrad.addColorStop(1, '#02050c');
+            this.ctx.fillStyle = bgGrad;
+            this.ctx.fillRect(0, 0, w, h);
+
+            // 地球弧形輪廓 (右下角圓弧地表)
+            this.ctx.save();
+            const earthX = w * 0.5;
+            const earthY = h + 280;
+            const earthR = 380;
+
+            // 大氣層發光層
+            const atmoGrad = this.ctx.createRadialGradient(earthX, earthY, earthR - 30, earthX, earthY, earthR + 50);
+            atmoGrad.addColorStop(0, 'rgba(0, 240, 255, 0.4)');
+            atmoGrad.addColorStop(0.5, 'rgba(0, 150, 255, 0.2)');
+            atmoGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            this.ctx.fillStyle = atmoGrad;
+            this.ctx.beginPath();
+            this.ctx.arc(earthX, earthY, earthR + 50, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            // 地球本體深藍弧面
+            const oceanGrad = this.ctx.createLinearGradient(0, h - 100, 0, h);
+            oceanGrad.addColorStop(0, '#00558f');
+            oceanGrad.addColorStop(0.4, '#002b54');
+            oceanGrad.addColorStop(1, '#001428');
+            this.ctx.fillStyle = oceanGrad;
+            this.ctx.beginPath();
+            this.ctx.arc(earthX, earthY, earthR, 0, Math.PI * 2);
+            this.ctx.fill();
+            this.ctx.restore();
+            break;
+          }
+
+          case 'mars': {
+            // Level 2: 火星小行星帶 (深紅赭褐宇宙 + 遠方火星球體 + 漂浮碎石)
+            const bgGrad = this.ctx.createRadialGradient(w * 0.8, h * 0.25, 40, w * 0.5, h * 0.5, w);
+            bgGrad.addColorStop(0, '#2d0c11');
+            bgGrad.addColorStop(0.6, '#18060a');
+            bgGrad.addColorStop(1, '#080103');
+            this.ctx.fillStyle = bgGrad;
+            this.ctx.fillRect(0, 0, w, h);
+
+            // 遠方火星 (右上角紅褐色球體)
+            this.ctx.save();
+            const marsX = w * 0.82;
+            const marsY = h * 0.22;
+            const marsR = 52;
+            const marsGrad = this.ctx.createRadialGradient(marsX - 15, marsY - 15, 8, marsX, marsY, marsR);
+            marsGrad.addColorStop(0, '#ff7043');
+            marsGrad.addColorStop(0.6, '#d84315');
+            marsGrad.addColorStop(0.9, '#bf360c');
+            marsGrad.addColorStop(1, '#3e1104');
+            this.ctx.fillStyle = marsGrad;
+            this.ctx.beginPath();
+            this.ctx.arc(marsX, marsY, marsR, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            // 火星光暈
+            this.ctx.strokeStyle = 'rgba(255, 112, 67, 0.25)';
+            this.ctx.lineWidth = 4;
+            this.ctx.stroke();
+            this.ctx.restore();
+
+            // 背景漂浮小行星碎石
+            this.ctx.save();
+            for (const rock of this.spaceRocks) {
+              if (this.isPlaying && !this.isPaused) {
+                rock.y += rock.speed;
+                rock.angle += rock.rotSpeed;
+                if (rock.y > h + 20) {
+                  rock.y = -20;
+                  rock.x = Math.random() * w;
+                }
+              }
+              this.ctx.save();
+              this.ctx.translate(rock.x, rock.y);
+              this.ctx.rotate(rock.angle);
+              this.ctx.fillStyle = '#4a251b';
+              this.ctx.strokeStyle = '#6d3b2b';
+              this.ctx.lineWidth = 1.2;
+              this.ctx.beginPath();
+              const s = rock.size;
+              this.ctx.moveTo(-s, -s * 0.6);
+              this.ctx.lineTo(s * 0.5, -s);
+              this.ctx.lineTo(s, -s * 0.2);
+              this.ctx.lineTo(s * 0.8, s * 0.7);
+              this.ctx.lineTo(-s * 0.3, s);
+              this.ctx.lineTo(-s * 0.9, s * 0.3);
+              this.ctx.closePath();
+              this.ctx.fill();
+              this.ctx.stroke();
+              this.ctx.restore();
+            }
+            this.ctx.restore();
+            break;
+          }
+
+          case 'nebula': {
+            // Level 3: 紫晶電磁星雲 (深邃紫羅蘭 + 動態流動星雲雲氣)
+            const bgGrad = this.ctx.createRadialGradient(w * 0.3, h * 0.4, 60, w * 0.5, h * 0.5, w);
+            bgGrad.addColorStop(0, '#24083a');
+            bgGrad.addColorStop(0.5, '#130421');
+            bgGrad.addColorStop(1, '#06010b');
+            this.ctx.fillStyle = bgGrad;
+            this.ctx.fillRect(0, 0, w, h);
+
+            // 紫粉色瀰漫星雲雲團 (柔和半透明徑向光)
+            this.ctx.save();
+            const neb1X = w * 0.35 + Math.sin(this.bgTime * 0.5) * 35;
+            const neb1Y = h * 0.4 + Math.cos(this.bgTime * 0.4) * 25;
+            const nebGrad1 = this.ctx.createRadialGradient(neb1X, neb1Y, 30, neb1X, neb1Y, 260);
+            nebGrad1.addColorStop(0, 'rgba(192, 132, 252, 0.25)');
+            nebGrad1.addColorStop(0.5, 'rgba(147, 51, 234, 0.12)');
+            nebGrad1.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            this.ctx.fillStyle = nebGrad1;
+            this.ctx.fillRect(0, 0, w, h);
+
+            const neb2X = w * 0.7 + Math.cos(this.bgTime * 0.6) * 30;
+            const neb2Y = h * 0.65 + Math.sin(this.bgTime * 0.5) * 20;
+            const nebGrad2 = this.ctx.createRadialGradient(neb2X, neb2Y, 20, neb2X, neb2Y, 220);
+            nebGrad2.addColorStop(0, 'rgba(236, 72, 153, 0.22)');
+            nebGrad2.addColorStop(0.6, 'rgba(168, 85, 247, 0.1)');
+            nebGrad2.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            this.ctx.fillStyle = nebGrad2;
+            this.ctx.fillRect(0, 0, w, h);
+            this.ctx.restore();
+            break;
+          }
+
+          case 'twin_sun': {
+            // Level 4: 雙子星耀金星系 (溫暖琥珀暗金 + 雙子恆星與日冕輝光)
+            const bgGrad = this.ctx.createRadialGradient(w * 0.5, h * 0.2, 80, w * 0.5, h * 0.5, w);
+            bgGrad.addColorStop(0, '#2b1b05');
+            bgGrad.addColorStop(0.5, '#170e02');
+            bgGrad.addColorStop(1, '#090500');
+            this.ctx.fillStyle = bgGrad;
+            this.ctx.fillRect(0, 0, w, h);
+
+            // 繪製雙子恆星 (Twin Stars)
+            this.ctx.save();
+            const suns = [
+              { x: w * 0.32, y: h * 0.2, r: 36, color: '#ffb703', flare: '#fb8500' },
+              { x: w * 0.46, y: h * 0.15, r: 24, color: '#ffe600', flare: '#ffb703' }
+            ];
+
+            for (const s of suns) {
+              // 日冕光暈
+              const flareGrad = this.ctx.createRadialGradient(s.x, s.y, s.r * 0.5, s.x, s.y, s.r * 3.5);
+              flareGrad.addColorStop(0, 'rgba(255, 230, 0, 0.45)');
+              flareGrad.addColorStop(0.4, 'rgba(255, 119, 0, 0.18)');
+              flareGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+              this.ctx.fillStyle = flareGrad;
+              this.ctx.beginPath();
+              this.ctx.arc(s.x, s.y, s.r * 3.5, 0, Math.PI * 2);
+              this.ctx.fill();
+
+              // 恆星光球
+              const coreGrad = this.ctx.createRadialGradient(s.x - s.r * 0.25, s.y - s.r * 0.25, s.r * 0.1, s.x, s.y, s.r);
+              coreGrad.addColorStop(0, '#ffffff');
+              coreGrad.addColorStop(0.3, s.color);
+              coreGrad.addColorStop(1, s.flare);
+              this.ctx.fillStyle = coreGrad;
+              this.ctx.beginPath();
+              this.ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+              this.ctx.fill();
+            }
+            this.ctx.restore();
+            break;
+          }
+
+          case 'warp': {
+            // Level 5: 超空間大決戰 (光速躍遷星芒條紋 + 底部母艦矩陣網格)
+            const bgGrad = this.ctx.createRadialGradient(w * 0.5, h * 0.4, 50, w * 0.5, h * 0.5, w);
+            bgGrad.addColorStop(0, '#04181a');
+            bgGrad.addColorStop(0.6, '#020b0d');
+            bgGrad.addColorStop(1, '#000405');
+            this.ctx.fillStyle = bgGrad;
+            this.ctx.fillRect(0, 0, w, h);
+
+            // 底部外星母艦空間網絡透視網格
+            this.ctx.save();
+            this.ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
+            this.ctx.lineWidth = 1;
+            const gridBottom = h - 20;
+            const gridTop = h - 160;
+            const vanishingX = w * 0.5;
+
+            for (let x = 0; x <= w; x += 60) {
+              this.ctx.beginPath();
+              this.ctx.moveTo(x, gridBottom);
+              this.ctx.lineTo(vanishingX + (x - vanishingX) * 0.25, gridTop);
+              this.ctx.stroke();
+            }
+            for (let y = gridTop; y <= gridBottom; y += 28) {
+              this.ctx.beginPath();
+              this.ctx.moveTo(0, y);
+              this.ctx.lineTo(w, y);
+              this.ctx.stroke();
+            }
+            this.ctx.restore();
+            break;
+          }
+        }
+      }
+
       /* ================= 遊戲主循環 (Loop) ================= */
       loop() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // 背景星空
+        // 繪製關卡專屬特色背景
+        this.renderLevelBackground();
+
+        // 繪製背景星空 (若在 Level 5 則繪製光速光斑躍遷線條)
         this.renderStars();
 
         if (this.isPlaying && !this.isPaused) {
-          // 維持畫面上 2~3 個慢速飄落的大寫目標
-          if (this.targets.length < 3 && Math.random() < 0.03) {
+          // 計算倒數時間 (60 秒)
+          const elapsedSec = Math.floor((Date.now() - this.levelStartTime) / 1000);
+          this.timeLeft = Math.max(0, this.levelDuration - elapsedSec);
+          this.updateHUD();
+
+          // 倒數歸零：通關結算！
+          if (this.timeLeft <= 0) {
+            this.handleLevelClear();
+            return;
+          }
+
+          // 目標生成管理：依各關卡 maxTargets 上限控制
+          const cfg = LEVEL_CONFIGS[this.currentLevelIdx];
+          if (this.targets.length < cfg.maxTargets && Math.random() < 0.035) {
             this.spawnTarget();
           }
 
@@ -1130,19 +1416,36 @@
       }
 
       renderStars() {
-        this.ctx.fillStyle = '#ffffff';
+        const isWarp = (LEVEL_CONFIGS[this.currentLevelIdx].theme === 'warp');
+
         for (const s of this.stars) {
           if (this.isPlaying && !this.isPaused) {
-            s.y += s.speed;
+            // 超空間關卡星芒以 4 倍速拉長掠過
+            s.y += isWarp ? (s.speed * 4.5) : s.speed;
             if (s.y > this.canvas.height) {
               s.y = 0;
               s.x = Math.random() * this.canvas.width;
             }
           }
+
+          this.ctx.save();
           this.ctx.globalAlpha = s.alpha;
-          this.ctx.fillRect(s.x, s.y, s.size, s.size);
+
+          if (isWarp) {
+            // 繪製超空間躍遷光束條紋
+            this.ctx.strokeStyle = (s.colorRatio > 0.5) ? '#00f0ff' : '#ffffff';
+            this.ctx.lineWidth = s.size * 0.9;
+            this.ctx.beginPath();
+            this.ctx.moveTo(s.x, s.y);
+            this.ctx.lineTo(s.x, s.y + s.speed * 18);
+            this.ctx.stroke();
+          } else {
+            // 常規星光點
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.fillRect(s.x, s.y, s.size, s.size);
+          }
+          this.ctx.restore();
         }
-        this.ctx.globalAlpha = 1.0;
       }
 
       updateTargets() {
